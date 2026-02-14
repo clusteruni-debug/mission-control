@@ -12,12 +12,13 @@
 - 생산성 통계 (연속 커밋 일수, 7일 히트맵, 프로젝트별 바차트)
 - 연동 맵 (프로젝트 간 관계 시각화)
 - 프로젝트 상세 페이지 (`/project/[folder]`)
-- 프로젝트 CLAUDE.md + CHANGELOG.md 생성
-- 워크스페이스 CLAUDE.md에 등록
+- Vercel 배포 (https://mission-control-psi-smoky.vercel.app)
 - GitHub 레포 생성 + 초기 커밋/push
+- 프로젝트 CLAUDE.md + CHANGELOG.md 생성
+- 워크스페이스 CLAUDE.md + 글로벌 CLAUDE.md에 등록
 
 ### ⏭️ 다음
+- GitHub Token 발급 + Vercel 환경변수 설정
 - Supabase 연동 (스냅샷 히스토리 저장)
 - 다크모드 토글 버튼
-- Vercel 배포
 - 프로젝트 검색/정렬 기능

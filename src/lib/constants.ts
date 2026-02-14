@@ -104,6 +104,7 @@ export const PROJECTS: ProjectConfig[] = [
     description: '워크스페이스 프로젝트 관제 대시보드',
     techStack: ['Next.js', 'TypeScript', 'Supabase'],
     category: 'tool',
+    deployUrl: 'https://mission-control-psi-smoky.vercel.app',
   },
 ];
 
