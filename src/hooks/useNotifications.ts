@@ -2,8 +2,11 @@
 
 import { useCallback, useMemo, useRef, useState } from 'react';
 
+export const DEFAULT_MAKE_MONEY_LOSS_THRESHOLD = -10;
+const SNOOZE_MS = 5 * 60 * 1000;
+
 export interface NotificationConfig {
-  makeMoneyLossThreshold: number;
+  makeMoneyLossThreshold?: number;
   serviceDownAlert: boolean;
   enabled: boolean;
 }
@@ -15,6 +18,7 @@ export interface Notification {
   message: string;
   timestamp: string;
   dismissed: boolean;
+  fingerprint?: string;
 }
 
 function makeId() {
@@ -32,10 +36,22 @@ export function useNotifications(config: NotificationConfig): {
 } {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const lastServiceState = useRef<Record<string, string>>({});
+  const offlineSince = useRef<Record<string, number>>({});
+  const snoozedUntil = useRef<Record<string, number>>({});
+
+  const threshold =
+    config.makeMoneyLossThreshold ?? DEFAULT_MAKE_MONEY_LOSS_THRESHOLD;
 
   const pushNotification = useCallback(
-    (item: Omit<Notification, 'id' | 'timestamp' | 'dismissed'>) => {
+    (
+      item: Omit<Notification, 'id' | 'timestamp' | 'dismissed'> & {
+        fingerprint?: string;
+      }
+    ) => {
       if (!config.enabled) return;
+      const fingerprint = item.fingerprint || `${item.type}:${item.title}:${item.message}`;
+      const snoozeUntil = snoozedUntil.current[fingerprint] || 0;
+      if (Date.now() < snoozeUntil) return;
 
       const next: Notification = {
         id: makeId(),
@@ -44,9 +60,10 @@ export function useNotifications(config: NotificationConfig): {
         message: item.message,
         timestamp: new Date().toISOString(),
         dismissed: false,
+        fingerprint,
       };
 
-      setNotifications((prev) => [next, ...prev].slice(0, 50));
+      setNotifications((prev) => [next, ...prev].slice(0, 10));
 
       if (typeof window !== 'undefined' && 'Notification' in window) {
         if (window.Notification.permission === 'granted') {
@@ -65,11 +82,30 @@ export function useNotifications(config: NotificationConfig): {
       const prev = lastServiceState.current[service];
       lastServiceState.current[service] = status;
 
-      if (prev && prev !== 'offline' && status === 'offline') {
+      if (status === 'offline') {
+        if (!offlineSince.current[service]) {
+          offlineSince.current[service] = Date.now();
+        }
+        const elapsedMin = Math.max(
+          1,
+          Math.floor((Date.now() - offlineSince.current[service]) / 60000)
+        );
         pushNotification({
           type: 'error',
           title: `${service} 오프라인`,
-          message: `${service}가 offline 상태로 전환되었습니다.`,
+          message: `${service} ${elapsedMin}분째 오프라인`,
+          fingerprint: `service-offline:${service}`,
+        });
+      } else {
+        delete offlineSince.current[service];
+      }
+
+      if (prev && prev !== status && status !== 'offline') {
+        pushNotification({
+          type: 'info',
+          title: `${service} 복구`,
+          message: `${service} 상태가 ${status}로 변경되었습니다.`,
+          fingerprint: `service-recovered:${service}`,
         });
       }
     },
@@ -79,25 +115,39 @@ export function useNotifications(config: NotificationConfig): {
   const checkPnl = useCallback(
     (value: number) => {
       if (!config.enabled) return;
-      if (value <= config.makeMoneyLossThreshold) {
+      if (value <= threshold) {
         pushNotification({
           type: 'warning',
           title: 'Make Money 손실 경고',
-          message: `P&L ${value.toFixed(2)}$ (임계값 ${config.makeMoneyLossThreshold}$)`,
+          message: `P&L ${value.toFixed(2)}$ (임계값 ${threshold}$)`,
+          fingerprint: 'pnl-threshold',
         });
       }
     },
-    [config.enabled, config.makeMoneyLossThreshold, pushNotification]
+    [config.enabled, pushNotification, threshold]
   );
 
   const dismiss = useCallback((id: string) => {
     setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, dismissed: true } : n))
+      prev.map((n) => {
+        if (n.id !== id) return n;
+        if (n.fingerprint) {
+          snoozedUntil.current[n.fingerprint] = Date.now() + SNOOZE_MS;
+        }
+        return { ...n, dismissed: true };
+      })
     );
   }, []);
 
   const dismissAll = useCallback(() => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, dismissed: true })));
+    setNotifications((prev) =>
+      prev.map((n) => {
+        if (n.fingerprint) {
+          snoozedUntil.current[n.fingerprint] = Date.now() + SNOOZE_MS;
+        }
+        return { ...n, dismissed: true };
+      })
+    );
   }, []);
 
   const hasUnread = useMemo(
@@ -115,4 +165,3 @@ export function useNotifications(config: NotificationConfig): {
     checkPnl,
   };
 }
-

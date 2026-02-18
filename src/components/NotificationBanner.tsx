@@ -3,6 +3,10 @@
 import { useEffect, useMemo } from 'react';
 import { AlertTriangle, Info, XCircle, X } from 'lucide-react';
 import type { Notification } from '@/hooks/useNotifications';
+import { DEFAULT_MAKE_MONEY_LOSS_THRESHOLD } from '@/hooks/useNotifications';
+
+const AUTO_DISMISS_MS = 10000;
+const SNOOZE_MINUTES = 5;
 
 interface NotificationBannerProps {
   notifications: Notification[];
@@ -29,16 +33,20 @@ export function NotificationBanner({
     () => notifications.filter((n) => !n.dismissed).slice(0, 3),
     [notifications]
   );
+  const recentHistory = useMemo(
+    () => notifications.slice(0, 10),
+    [notifications]
+  );
 
   useEffect(() => {
     if (!active.length) return;
     const timers = active.map((item) =>
-      window.setTimeout(() => onDismiss(item.id), 10000)
+      window.setTimeout(() => onDismiss(item.id), AUTO_DISMISS_MS)
     );
     return () => timers.forEach((timerId) => window.clearTimeout(timerId));
   }, [active, onDismiss]);
 
-  if (!active.length) return null;
+  if (!active.length && recentHistory.length === 0) return null;
 
   return (
     <div className="fixed inset-x-0 top-4 z-50 mx-auto w-full max-w-3xl px-4">
@@ -66,8 +74,13 @@ export function NotificationBanner({
             </div>
           );
         })}
+
+        {active.length === 0 && recentHistory.length > 0 && (
+          <div className="rounded-lg border border-gray-200 bg-white/90 px-4 py-2 text-xs text-gray-600 shadow dark:border-gray-800 dark:bg-gray-900/90 dark:text-gray-300">
+            최근 알림 {recentHistory.length}건 유지 중 · 재표시 지연 {SNOOZE_MINUTES}분 · 기본 P&L 임계값 {DEFAULT_MAKE_MONEY_LOSS_THRESHOLD}$
+          </div>
+        )}
       </div>
     </div>
   );
 }
-

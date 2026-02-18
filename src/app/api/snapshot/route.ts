@@ -28,8 +28,10 @@ const RANGE_CONFIG: Record<
 > = {
   '24h': { lookbackMs: 24 * 60 * 60 * 1000, bucketMs: 5 * 60 * 1000, maxPoints: 288 },
   '7d': { lookbackMs: 7 * 24 * 60 * 60 * 1000, bucketMs: 30 * 60 * 1000, maxPoints: 336 },
-  '30d': { lookbackMs: 30 * 24 * 60 * 60 * 1000, bucketMs: 2 * 60 * 60 * 1000, maxPoints: 360 },
+  '30d': { lookbackMs: 30 * 24 * 60 * 60 * 1000, bucketMs: 60 * 60 * 1000, maxPoints: 720 },
 };
+const CLEANUP_INTERVAL_MS = 24 * 60 * 60 * 1000;
+let lastCleanupAt = 0;
 
 function makeResponse<T>(
   payload: T | null,
@@ -154,6 +156,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Keep retention cleanup isolated from main insert flow.
+    if (Date.now() - lastCleanupAt > CLEANUP_INTERVAL_MS) {
+      lastCleanupAt = Date.now();
+      try {
+        const cutoff = new Date(Date.now() - RANGE_CONFIG['30d'].lookbackMs).toISOString();
+        await supabase.from('mc_snapshots').delete().lt('created_at', cutoff);
+      } catch {
+        // Retention cleanup errors must not affect snapshot ingestion.
+      }
+    }
+
     return NextResponse.json(
       makeResponse(data, 'online', Date.now() - start)
     );
@@ -192,9 +205,17 @@ export async function GET(request: NextRequest) {
 
     const rows = (data || []) as SnapshotRow[];
     const sampled = downsampleSnapshots(rows, range);
+    const meta = {
+      totalRows: rows.length,
+      oldestAt: rows.length ? rows[0].created_at : null,
+      newestAt: rows.length ? rows[rows.length - 1].created_at : null,
+    };
 
     return NextResponse.json(
-      makeResponse(sampled, 'online', Date.now() - start)
+      {
+        ...makeResponse(sampled, 'online', Date.now() - start),
+        meta,
+      }
     );
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Snapshot fetch failed';
@@ -204,4 +225,3 @@ export async function GET(request: NextRequest) {
     );
   }
 }
-
