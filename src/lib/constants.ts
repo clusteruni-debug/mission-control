@@ -1,16 +1,7 @@
+import type { ProjectConfig } from '@/types';
+
 // 워크스페이스 프로젝트 정의
 export const GITHUB_OWNER = 'clusteruni-debug';
-
-export interface ProjectConfig {
-  name: string;
-  folder: string;
-  repo: string; // GitHub 레포 이름
-  description: string;
-  techStack: string[];
-  category: 'running' | 'dev' | 'legacy' | 'tool';
-  deployUrl?: string;
-  connections?: string[]; // 연동된 프로젝트 folder 목록
-}
 
 export const PROJECTS: ProjectConfig[] = [
   {
@@ -20,6 +11,9 @@ export const PROJECTS: ProjectConfig[] = [
     description: 'ADHD 맞춤 할 일 관리 + 라이프 리듬',
     techStack: ['HTML', 'Vanilla JS', 'Firebase'],
     category: 'running',
+    platform: 'windows',
+    runCmd: 'npx serve -p 5000',
+    port: 5000,
     connections: ['telegram-event-bot', 'web3-budget-app', 'article-editor'],
   },
   {
@@ -27,8 +21,11 @@ export const PROJECTS: ProjectConfig[] = [
     folder: 'Kimpbotforme',
     repo: 'Kimpbotforme',
     description: '크립토 김치 프리미엄 모니터링',
-    techStack: ['Supabase', '거래소 API'],
+    techStack: ['React', 'Vite', 'WebSocket'],
     category: 'running',
+    platform: 'windows',
+    runCmd: 'cd react-app && npm run dev',
+    port: 5173,
   },
   {
     name: 'Web3 가계부',
@@ -37,6 +34,9 @@ export const PROJECTS: ProjectConfig[] = [
     description: '자산 관리 + 가계부',
     techStack: ['Vite', 'Vanilla JS', 'Supabase'],
     category: 'running',
+    platform: 'windows',
+    runCmd: 'npx vite --port 5173',
+    port: 5173,
     connections: ['To-do-list-for-adhd'],
   },
   {
@@ -44,8 +44,11 @@ export const PROJECTS: ProjectConfig[] = [
     folder: 'telegram-event-bot',
     repo: 'telegram-event-bot',
     description: '텔레그램 이벤트 알림 봇',
-    techStack: ['Node.js', 'Telegram API'],
+    techStack: ['Python', 'Flask', 'Supabase'],
     category: 'running',
+    platform: 'windows',
+    runCmd: 'python web.py',
+    port: 5001,
     connections: ['To-do-list-for-adhd'],
   },
   {
@@ -55,6 +58,9 @@ export const PROJECTS: ProjectConfig[] = [
     description: '아기 케어 기록 앱',
     techStack: ['Next.js', 'TypeScript', 'Firebase'],
     category: 'dev',
+    platform: 'windows',
+    runCmd: 'npm run dev',
+    port: 3000,
   },
   {
     name: 'Article Editor',
@@ -63,6 +69,9 @@ export const PROJECTS: ProjectConfig[] = [
     description: 'X 아티클 작성 에디터',
     techStack: ['Next.js', 'Supabase', 'TipTap'],
     category: 'dev',
+    platform: 'windows',
+    runCmd: 'npm run dev',
+    port: 3000,
     connections: ['To-do-list-for-adhd'],
   },
   {
@@ -72,6 +81,9 @@ export const PROJECTS: ProjectConfig[] = [
     description: '텍스트 기반 RPG 게임',
     techStack: ['Vite', 'Vanilla JS'],
     category: 'dev',
+    platform: 'windows',
+    runCmd: 'npm run dev',
+    port: 5173,
   },
   {
     name: 'Portfolio',
@@ -80,6 +92,9 @@ export const PROJECTS: ProjectConfig[] = [
     description: '포트폴리오 사이트',
     techStack: ['Vite', 'React', 'TypeScript'],
     category: 'dev',
+    platform: 'windows',
+    runCmd: 'npm run dev',
+    port: 5173,
   },
   {
     name: 'Saitama Training',
@@ -88,6 +103,30 @@ export const PROJECTS: ProjectConfig[] = [
     description: '사이타마 트레이닝 추적',
     techStack: ['React', 'TypeScript', 'Firebase', 'Zustand'],
     category: 'dev',
+    platform: 'windows',
+    runCmd: 'npm run dev',
+    port: 5173,
+  },
+  {
+    name: 'Make Money',
+    folder: 'make-money-project',
+    repo: 'make-money-project',
+    description: 'Polymarket AI 자동매매 봇 + 운영 대시보드',
+    techStack: ['Node.js', 'Express', 'React', 'SQLite', 'Claude AI'],
+    category: 'running',
+    platform: 'windows',
+    runCmd: 'cd server && node index.js',
+    port: 3001,
+  },
+  {
+    name: 'OpenClaw',
+    folder: 'claude-code-bot',
+    repo: 'openclaw-bot',
+    description: '텔레그램→Claude Code 자율 코딩봇',
+    techStack: ['Python', 'python-telegram-bot', 'Claude Code CLI'],
+    category: 'tool',
+    platform: 'wsl',
+    runCmd: 'cd ~/바이브코딩/projects/claude-code-bot && python bot.py',
   },
   {
     name: 'Claude Skills',
@@ -96,6 +135,8 @@ export const PROJECTS: ProjectConfig[] = [
     description: 'Claude Code 커스텀 스킬 모음',
     techStack: ['Shell', 'Markdown'],
     category: 'tool',
+    platform: 'both',
+    runCmd: './setup.sh',
   },
   {
     name: 'Mission Control',
@@ -105,6 +146,9 @@ export const PROJECTS: ProjectConfig[] = [
     techStack: ['Next.js', 'TypeScript', 'Supabase'],
     category: 'tool',
     deployUrl: 'https://mission-control-psi-smoky.vercel.app',
+    platform: 'windows',
+    runCmd: 'npm run dev',
+    port: 3000,
   },
 ];
 

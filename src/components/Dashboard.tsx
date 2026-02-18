@@ -6,11 +6,13 @@ import { StatsBar } from './StatsBar';
 import { ActivityFeed } from './ActivityFeed';
 import { ProductivityStats } from './ProductivityStats';
 import { ConnectionMap } from './ConnectionMap';
+import { TaskBoard } from './TaskBoard';
+import { BotStatus } from './BotStatus';
 import type { ProjectSnapshot, ScanResult } from '@/types';
 import { RefreshCw, Loader2 } from 'lucide-react';
 
 type FilterCategory = 'all' | 'running' | 'dev' | 'legacy' | 'tool';
-type TabView = 'projects' | 'feed' | 'stats' | 'connections';
+type TabView = 'projects' | 'feed' | 'stats' | 'connections' | 'board';
 
 export function Dashboard() {
   const [snapshots, setSnapshots] = useState<ProjectSnapshot[]>([]);
@@ -64,6 +66,7 @@ export function Dashboard() {
     { label: '활동 피드', value: 'feed' },
     { label: '생산성', value: 'stats' },
     { label: '연동', value: 'connections' },
+    { label: '작업 보드', value: 'board' },
   ];
 
   return (
@@ -149,13 +152,16 @@ export function Dashboard() {
       ) : (
         <>
           {activeTab === 'projects' && (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {sorted.map((snapshot) => (
-                <ProjectCard
-                  key={snapshot.project.folder}
-                  snapshot={snapshot}
-                />
-              ))}
+            <div className="space-y-6">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {sorted.map((snapshot) => (
+                  <ProjectCard
+                    key={snapshot.project.folder}
+                    snapshot={snapshot}
+                  />
+                ))}
+              </div>
+              <BotStatus />
             </div>
           )}
 
@@ -183,6 +189,15 @@ export function Dashboard() {
                 프로젝트 간 연동 현황
               </h2>
               <ConnectionMap />
+            </div>
+          )}
+
+          {activeTab === 'board' && (
+            <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
+              <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+                작업 보드
+              </h2>
+              <TaskBoard />
             </div>
           )}
         </>

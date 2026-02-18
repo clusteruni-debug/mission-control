@@ -7,7 +7,6 @@ import type { ProjectSnapshot } from '@/types';
 import {
   GitCommit,
   Clock,
-  AlertTriangle,
   CheckCircle,
   Package,
   FileText,
@@ -22,6 +21,14 @@ export function ProjectCard({ snapshot }: ProjectCardProps) {
   const { project, git, health, changelog } = snapshot;
   const isNeglected = git.daysSinceCommit !== null && git.daysSinceCommit >= 7;
   const isStale = git.daysSinceCommit !== null && git.daysSinceCommit >= 14;
+  const platformMeta =
+    project.platform === 'windows'
+      ? { label: 'Windows', className: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' }
+      : project.platform === 'wsl'
+        ? { label: 'WSL', className: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' }
+        : project.platform === 'both'
+          ? { label: 'Both', className: 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300' }
+          : null;
 
   return (
     <Link
@@ -93,6 +100,11 @@ export function ProjectCard({ snapshot }: ProjectCardProps) {
 
       {/* 건강 상태 */}
       <div className="mb-3 flex flex-wrap gap-2">
+        {platformMeta && (
+          <span className={cn('rounded-md px-2 py-0.5 text-xs font-medium', platformMeta.className)}>
+            {platformMeta.label}
+          </span>
+        )}
         {health.hasPackageJson && (
           <span className="flex items-center gap-1 rounded-md bg-gray-100 px-2 py-0.5 text-xs text-gray-600 dark:bg-gray-800 dark:text-gray-300">
             <Package className="h-3 w-3" /> npm
@@ -125,7 +137,18 @@ export function ProjectCard({ snapshot }: ProjectCardProps) {
             {tech}
           </span>
         ))}
+        {project.port && (
+          <span className="rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+            :{project.port}
+          </span>
+        )}
       </div>
+
+      {project.runCmd && (
+        <div className="mt-2 rounded bg-gray-50 px-2 py-1 text-xs text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+          {project.runCmd}
+        </div>
+      )}
 
       {/* CHANGELOG */}
       {changelog && (

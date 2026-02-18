@@ -1,4 +1,5 @@
-import { GITHUB_OWNER, PROJECTS, type ProjectConfig } from './constants';
+import { GITHUB_OWNER, PROJECTS } from './constants';
+import type { ProjectConfig } from '@/types';
 
 // GitHub API 설정
 const GITHUB_API = 'https://api.github.com';

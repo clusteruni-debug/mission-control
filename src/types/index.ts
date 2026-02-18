@@ -1,4 +1,18 @@
-import type { ProjectConfig } from '@/lib/constants';
+export type ProjectPlatform = 'windows' | 'wsl' | 'both';
+
+export interface ProjectConfig {
+  name: string;
+  folder: string;
+  repo: string;
+  description: string;
+  techStack: string[];
+  category: 'running' | 'dev' | 'legacy' | 'tool';
+  deployUrl?: string;
+  connections?: string[];
+  platform?: ProjectPlatform;
+  runCmd?: string;
+  port?: number;
+}
 
 export interface GitHubCommit {
   sha: string;
@@ -56,4 +70,14 @@ export interface FeedItem extends GitHubCommit {
 export interface FeedResult {
   feed: FeedItem[];
   scannedAt: string;
+}
+
+export interface TaskBoardItem {
+  taskId: string;
+  project: string;
+  type: string;
+  owner: string;
+  scopeFiles: string;
+  status: string;
+  notes: string;
 }
