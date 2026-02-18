@@ -97,6 +97,25 @@ GITHUB_TOKEN=                        # 없으면 60회/시간, 있으면 5000회
 # OPENCLAW_HEALTH_URL=http://localhost:7100
 ```
 
+## Vercel 환경변수 현황
+
+| 변수 | 상태 | 비고 |
+|------|------|------|
+| `GITHUB_TOKEN` | ✅ 설정됨 | Dev/Preview/Prod |
+| `TELEGRAM_BOT_API_URL` | ✅ 설정됨 | Railway: `telegram-event-bot-production-5421.up.railway.app` |
+| `SUPABASE_URL` | ❌ 미설정 | 스냅샷 수집/조회 기능 필요 시 추가 |
+| `SUPABASE_SERVICE_ROLE_KEY` | ❌ 미설정 | 위와 동일 |
+| `COLLECTOR_SECRET` | ❌ 미설정 | 스냅샷 POST 인증용 |
+| `OPENCLAW_HEALTH_URL` | ❌ 미설정 | WSL 전용 — Tailscale Funnel 또는 Railway 배포 필요 |
+| `OPENCLAW_API_URL` | ❌ 미설정 | 위와 동일 |
+| `MAKE_MONEY_API_URL` | ❌ 미설정 | Windows 전용 — Tailscale Funnel 또는 별도 배포 필요 |
+
+### TODO (Vercel 배포 완성)
+
+1. Supabase 환경변수 3개 추가 (Vercel 대시보드에서 수동)
+2. OpenClaw health_api를 외부 접근 가능하게 만들기 (Tailscale Funnel 또는 Railway)
+3. Make Money API를 외부 접근 가능하게 만들기 (위와 동일)
+
 ## 주의사항
 
 - `constants.ts`에 프로젝트 추가/수정 시 워크스페이스 CLAUDE.md도 동기화
