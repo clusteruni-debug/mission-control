@@ -8,40 +8,64 @@
 - **언어**: TypeScript
 - **스타일**: Tailwind CSS 4
 - **아이콘**: Lucide React
-- **백엔드**: Supabase (스냅샷 저장용, 미사용 상태)
-- **데이터 소스**: GitHub API (public repos), OpenClaw health API (WSL)
+- **차트**: recharts (TrendChart)
+- **백엔드**: Supabase (스냅샷 저장용)
+- **데이터 소스**: GitHub API, Make Money API, Telegram Bot API, OpenClaw API
 
 ## 구조
 
 ```
 src/
 ├── app/
-│   ├── page.tsx              # Dashboard 진입점
-│   ├── layout.tsx            # 레이아웃 (Geist 폰트, 다크모드)
-│   ├── globals.css           # Tailwind 글로벌
+│   ├── page.tsx                    # Dashboard 진입점
+│   ├── layout.tsx                  # 레이아웃 (Geist 폰트, 다크모드)
+│   ├── globals.css                 # Tailwind 글로벌
 │   ├── api/
-│   │   ├── scan/route.ts     # 전체 프로젝트 스캔 API
-│   │   ├── scan/[folder]/    # 개별 프로젝트 상세 API
-│   │   ├── feed/route.ts     # 통합 활동 피드 API
-│   │   ├── bot-status/route.ts # OpenClaw 봇 상태 프록시 API
-│   │   └── task-board/route.ts # AGENT_TASK_BOARD.md 파싱 API
-│   └── project/[folder]/     # 프로젝트 상세 페이지
+│   │   ├── scan/route.ts           # 전체 프로젝트 스캔 API
+│   │   ├── scan/[folder]/          # 개별 프로젝트 상세 API
+│   │   ├── feed/route.ts           # 통합 활동 피드 API
+│   │   ├── bot-status/route.ts     # OpenClaw 봇 상태 프록시 API
+│   │   ├── task-board/route.ts     # AGENT_TASK_BOARD.md 파싱 API
+│   │   ├── make-money/route.ts     # Make Money API 프록시 (portfolio/health/engines/trades)
+│   │   ├── telegram-bot/route.ts   # Telegram Bot API 프록시 (stats/health/analyzed)
+│   │   ├── openclaw-command/route.ts # OpenClaw command API 프록시 (GET/POST)
+│   │   ├── snapshot/route.ts       # Supabase mc_snapshots CRUD (GET/POST)
+│   │   └── trades-sync/route.ts    # 거래 동기화 API
+│   └── project/[folder]/           # 프로젝트 상세 페이지
 ├── components/
-│   ├── Dashboard.tsx         # 메인 대시보드 (탭 5개: 프로젝트/피드/생산성/연동/작업보드)
-│   ├── ProjectCard.tsx       # 프로젝트 카드 (건강 상태 + 플랫폼 뱃지)
-│   ├── StatsBar.tsx          # 상단 통계 바
-│   ├── ActivityFeed.tsx      # 커밋 타임라인 (날짜별 그룹)
-│   ├── ProductivityStats.tsx # 생산성 차트 (streak + 히트맵)
-│   ├── ConnectionMap.tsx     # 프로젝트 연동 관계도
-│   ├── BotStatus.tsx         # OpenClaw 봇 상태 카드 (online/offline, 성공률, 작업 목록)
-│   └── TaskBoard.tsx         # AGENT_TASK_BOARD 칸반 뷰 (에이전트별 색상 구분)
+│   ├── Dashboard.tsx               # 메인 대시보드 (탭 8개: Overview/프로젝트/모니터링/OpenClaw/피드/생산성/연동/보드)
+│   ├── Overview.tsx                # 통합 Overview (4카드 + 타임라인 + TrendChart 3종)
+│   ├── ProjectCard.tsx             # 프로젝트 카드 (건강 상태 + 플랫폼 뱃지)
+│   ├── StatsBar.tsx                # 상단 통계 바 (+ 매매 P&L, 이벤트 참여율)
+│   ├── MakeMoneyWidget.tsx         # Make Money 위젯 (포트폴리오/엔진/거래)
+│   ├── EventWidget.tsx             # Telegram 이벤트 위젯 (통계/마감임박/참여율)
+│   ├── OpenClawControl.tsx         # OpenClaw 웹 컨트롤 패널 (커맨드/큐/히스토리)
+│   ├── TrendChart.tsx              # recharts 추세 차트 (24h/7d/30d)
+│   ├── CommandPalette.tsx          # Cmd+K 명령 팔레트
+│   ├── NotificationBanner.tsx      # 알림 배너 (손실 경고, 서비스 다운)
+│   ├── ActivityFeed.tsx            # 커밋 타임라인 (날짜별 그룹)
+│   ├── ProductivityStats.tsx       # 생산성 차트 (streak + 히트맵)
+│   ├── ConnectionMap.tsx           # 프로젝트 연동 관계도 (라이브 헬스체크)
+│   ├── BotStatus.tsx               # OpenClaw 봇 상태 카드
+│   └── TaskBoard.tsx               # 칸반 뷰 (에이전트별 색상)
+├── hooks/
+│   ├── useKeyboardShortcuts.ts     # 키보드 단축키 (1-8 탭, R, Cmd+K)
+│   └── useNotifications.ts         # 알림 시스템 (PnL/서비스 상태)
 ├── lib/
-│   ├── constants.ts          # 프로젝트 목록 (13개) + 카테고리 + 플랫폼 정보
-│   ├── github.ts             # GitHub API 호출 + 스캔 로직
-│   ├── supabase.ts           # Supabase 클라이언트 (미사용)
-│   └── utils.ts              # cn(), formatRelativeDate()
-└── types/
-    └── index.ts              # 공유 타입 정의 (ProjectConfig, TaskBoardItem 등)
+│   ├── constants.ts                # 프로젝트 목록 + 카테고리 + 플랫폼
+│   ├── github.ts                   # GitHub API 호출 + 스캔 로직
+│   ├── supabase.ts                 # Supabase 클라이언트 (anon)
+│   ├── supabase-admin.ts           # Supabase 서버 클라이언트 (service role)
+│   └── utils.ts                    # cn(), formatRelativeDate()
+├── types/
+│   ├── index.ts                    # 공유 타입 (ProjectConfig, MakeMoney*, TaskBoardItem 등)
+│   └── status.ts                   # ServiceStatus, ProxyResponse<T> (SSOT)
+└── ...
+supabase/
+└── migrations/
+    ├── 001_mc_snapshots.sql        # mc_snapshots 테이블 DDL
+    └── 002_mc_trades.sql           # mc_trades 테이블 DDL
+scripts/                            # (Codex 관리) 수집 자동화 스크립트
 ```
 
 ## 명령어
@@ -55,12 +79,22 @@ npm run lint     # ESLint
 ## 환경변수
 
 ```bash
-# .env.local 필요
-GITHUB_TOKEN=          # GitHub API 토큰 (없으면 시간당 60회 제한)
-OPENCLAW_HEALTH_URL=   # OpenClaw health API URL (기본: http://localhost:7100/health)
-TASK_BOARD_PATH=       # AGENT_TASK_BOARD.md 파일 경로 (배포 환경용)
-NEXT_PUBLIC_SUPABASE_URL=     # Supabase (현재 미사용)
-NEXT_PUBLIC_SUPABASE_ANON_KEY= # Supabase (현재 미사용)
+# .env.local 필요 (전체 목록은 .env.example 참고)
+
+# Supabase (서버사이드 — 스냅샷 저장)
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+
+# 스냅샷 수집 인증
+COLLECTOR_SECRET=your-collector-secret
+
+# GitHub API
+GITHUB_TOKEN=                        # 없으면 60회/시간, 있으면 5000회
+
+# 로컬 서비스 (기본값 있음, 변경 시에만)
+# MAKE_MONEY_API_URL=http://localhost:3001
+# TELEGRAM_BOT_API_URL=http://localhost:5001
+# OPENCLAW_HEALTH_URL=http://localhost:7100
 ```
 
 ## 주의사항
@@ -68,6 +102,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY= # Supabase (현재 미사용)
 - `constants.ts`에 프로젝트 추가/수정 시 워크스페이스 CLAUDE.md도 동기화
 - GitHub API rate limit: 토큰 없으면 60회/시간, 있으면 5000회/시간
 - `next: { revalidate: 300 }` — API 응답 5분 캐시
-- Supabase는 아직 미사용 (향후 스냅샷 히스토리 저장용)
-- OpenClaw 봇 상태: WSL에서 `health_api.py`가 실행중이어야 표시됨 (미실행 시 offline fallback)
+- 로컬 서비스(Make Money, Telegram Bot, OpenClaw) 미실행 시 graceful offline 표시
 - 작업 보드: `AGENT_TASK_BOARD.md`가 없으면 빈 상태 표시
+- Turbopack에서 변수-경로 dynamic import 불가 (`import('./' + name)` 패턴 사용 금지)
+- `src/types/status.ts`는 SSOT — 수정 시 영향도 분석 필수

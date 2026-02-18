@@ -44,6 +44,86 @@
 - 서비스 오프라인 시 `status='offline'` + `error` 반환
 - 모바일(375px)에서도 레이아웃 깨짐 없음
 
+## 현재 완료 상태
+
+**Phase 1-4 통합 완료 (커밋 830d37c, 2026-02-18):**
+- 모든 Codex 모듈 (TrendChart, CommandPalette, NotificationBanner, useKeyboardShortcuts, useNotifications)이 Dashboard.tsx + Overview.tsx에 연결 완료
+- 프록시 API 6개, 위젯 4개, Overview 통합 탭, Supabase 스냅샷 API 모두 구현됨
+- `npm run build` 에러 0건 확인됨
+
+---
+
+## Codex 작업 큐
+
+### MC-OPS-001: 스냅샷 수집 스크립트 생성
+
+- **TASK-ID**: `MC-OPS-001`
+- **목표**: 5분마다 POST /api/snapshot을 호출하는 PowerShell 수집 스크립트 생성
+- **수정 파일**: `scripts/collect-snapshots.ps1` (신규)
+- **완료 기준**:
+  1. `pwsh scripts/collect-snapshots.ps1` 실행 시 POST /api/snapshot 호출 성공
+  2. 로그를 `$env:TEMP\vibe-coding-logs\collector.log`에 남김
+  3. 인증: `Authorization: Bearer $COLLECTOR_SECRET` 헤더 포함
+  4. 에러 시 로그에 기록하고 비정상 종료하지 않음 (스케줄러가 다음 실행)
+
+**구현 참고:**
+```powershell
+# 호출 대상: http://localhost:3000/api/snapshot
+# 인증: Bearer 토큰 (.env.local의 COLLECTOR_SECRET)
+# 로그: $env:TEMP\vibe-coding-logs\collector.log (append)
+# 타임스탬프 포함, 응답 status 기록
+```
+
+### MC-OPS-002: Task Scheduler 자동 등록 스크립트
+
+- **TASK-ID**: `MC-OPS-002`
+- **목표**: collect-snapshots.ps1을 Windows Task Scheduler에 5분 간격으로 등록하는 헬퍼 스크립트
+- **수정 파일**: `scripts/setup-scheduler.ps1` (신규)
+- **완료 기준**:
+  1. 관리자 권한으로 실행 시 "VibeCoding-MC-Collector" 작업 등록
+  2. 5분 반복, 무기한 지속
+  3. 이미 등록되어 있으면 업데이트
+  4. 등록 결과를 콘솔에 출력
+
+**구현 참고:**
+```powershell
+# Task 이름: VibeCoding-MC-Collector
+# 트리거: 5분 반복 (RepetitionInterval)
+# 액션: pwsh -File <script-path>/collect-snapshots.ps1
+# 환경변수 COLLECTOR_SECRET는 스크립트 내에서 .env.local 파싱 or 인자로 전달
+```
+
+### MC-OPS-003: .env.local 파서 유틸 (선택)
+
+- **TASK-ID**: `MC-OPS-003`
+- **목표**: collect-snapshots.ps1이 .env.local에서 COLLECTOR_SECRET을 자동 읽도록 파서 함수 포함
+- **수정 파일**: `scripts/collect-snapshots.ps1` 내 함수로 포함
+- **완료 기준**: .env.local 파일에서 KEY=VALUE 파싱, `#` 주석 무시, 빈 줄 무시
+
+---
+
+## 수정 금지 파일 (Codex)
+
+아래 파일은 Claude Code가 관리 중이므로 Codex는 수정하지 말 것:
+- `src/components/Dashboard.tsx` — 통합 허브 (충돌 위험)
+- `src/components/Overview.tsx` — 4카드 + 타임라인 + TrendChart 연결
+- `src/types/status.ts` — 상태 SSOT
+- `src/types/index.ts` — 타입 정의
+- `src/lib/supabase-admin.ts` — Supabase 클라이언트
+
+## Codex 수정 가능 파일
+
+- `scripts/` (전체) — 신규 스크립트
+- `src/components/TrendChart.tsx` — Codex 소유
+- `src/components/CommandPalette.tsx` — Codex 소유
+- `src/components/NotificationBanner.tsx` — Codex 소유
+- `src/hooks/useKeyboardShortcuts.ts` — Codex 소유
+- `src/hooks/useNotifications.ts` — Codex 소유
+- `src/app/api/snapshot/route.ts` — Codex 소유
+- `src/app/api/trades-sync/route.ts` — Codex 소유
+
+---
+
 ## 멀티플랫폼 실행 컨텍스트 (공통)
 - 이 프로젝트는 Windows 원본 파일 + WSL `/mnt/c/...` 동일 파일 접근 구조를 전제로 운영한다.
 - 외부(노트북/모바일) 작업은 SSH -> WSL 경유가 기본이다.
