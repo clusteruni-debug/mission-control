@@ -12,20 +12,20 @@ import {
   Loader2,
 } from 'lucide-react';
 
+// health_api.py 실제 응답 형식에 맞춤
 interface BotTask {
   id: number;
-  chat_id: number;
-  command: string;
-  result: string;
-  timestamp: string;
+  task: string;
+  timestamp: string | null;
+  success: boolean | null;
 }
 
 interface ScheduledTask {
   id: number;
   chat_id: number;
-  cron_expr: string;
-  command: string;
-  active: boolean;
+  task: string;
+  cron_expr: string | null;
+  run_at: string | null;
 }
 
 interface BotHealthData {
@@ -186,16 +186,16 @@ export function BotStatus() {
                     key={task.id}
                     className="flex items-center gap-2 rounded-md bg-gray-50 px-3 py-2 text-sm dark:bg-gray-800"
                   >
-                    {task.result === 'success' ? (
+                    {task.success ? (
                       <CheckCircle className="h-4 w-4 shrink-0 text-green-500" />
                     ) : (
                       <XCircle className="h-4 w-4 shrink-0 text-red-500" />
                     )}
                     <span className="truncate text-gray-700 dark:text-gray-300">
-                      {task.command}
+                      {task.task}
                     </span>
                     <span className="ml-auto shrink-0 text-xs text-gray-400">
-                      {formatRelativeTime(task.timestamp)}
+                      {task.timestamp ? formatRelativeTime(task.timestamp) : '-'}
                     </span>
                   </div>
                 ))}
@@ -215,17 +215,12 @@ export function BotStatus() {
                     key={s.id}
                     className="flex items-center gap-2 rounded-md bg-gray-50 px-3 py-2 text-sm dark:bg-gray-800"
                   >
-                    <span
-                      className={cn(
-                        'h-2 w-2 shrink-0 rounded-full',
-                        s.active ? 'bg-green-500' : 'bg-gray-400'
-                      )}
-                    />
+                    <span className="h-2 w-2 shrink-0 rounded-full bg-green-500" />
                     <span className="truncate text-gray-700 dark:text-gray-300">
-                      {s.command}
+                      {s.task}
                     </span>
                     <span className="ml-auto shrink-0 font-mono text-xs text-gray-400">
-                      {s.cron_expr}
+                      {s.cron_expr || (s.run_at ? formatRelativeTime(s.run_at) : '-')}
                     </span>
                   </div>
                 ))}

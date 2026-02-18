@@ -2,22 +2,22 @@ import { NextResponse } from 'next/server';
 
 export const revalidate = 300; // 5분 캐시
 
+// health_api.py 실제 응답 형식
 export interface BotHealthResponse {
   recent_tasks: {
     id: number;
-    chat_id: number;
-    command: string;
-    result: string;
-    timestamp: string;
+    task: string;
+    timestamp: string | null;
+    success: boolean | null;
   }[];
   success_rate: number;
   last_run: string | null;
   scheduled: {
     id: number;
     chat_id: number;
-    cron_expr: string;
-    command: string;
-    active: boolean;
+    task: string;
+    cron_expr: string | null;
+    run_at: string | null;
   }[];
   uptime: number;
 }
