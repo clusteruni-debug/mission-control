@@ -124,6 +124,48 @@
 
 ---
 
+## Codex 작업 지시: MC-OPS-002 — 스냅샷 수집 스크립트
+
+> **TASK-ID**: MC-OPS-002
+> **목표**: `scripts/collect-snapshots.ps1` 작성 — Windows 작업 스케줄러에서 5분 간격 실행
+> **수정 파일**: `scripts/collect-snapshots.ps1` (신규)
+> **완료 기준**: (1) 스크립트 실행 시 POST 2건 호출 성공 (2) 로그 파일 정상 기록 (3) 에러 시 종료코드 0 유지 (스케줄러 안정성)
+
+### 스펙
+
+```powershell
+# scripts/collect-snapshots.ps1
+# 역할: POST /api/snapshot + POST /api/trades-sync 호출 (5분 스케줄러용)
+# 인증: COLLECTOR_SECRET 환경변수 → Bearer 토큰
+# 로그: $env:TEMP\vibe-coding-logs\collector.log (append, 타임스탬프 포함)
+# 에러 처리: HTTP 실패/타임아웃 시 로그에 기록하되 exit 0 유지
+
+# 필수 동작:
+# 1. $env:COLLECTOR_SECRET 없으면 경고 로그 + exit 0
+# 2. $baseUrl = "http://localhost:3000" (환경변수 MC_BASE_URL로 오버라이드 가능)
+# 3. POST $baseUrl/api/snapshot (Authorization: Bearer $secret)
+# 4. POST $baseUrl/api/trades-sync (Authorization: Bearer $secret)
+# 5. 각 호출 결과 (status code, response time) 로그
+# 6. 로그 디렉토리 자동 생성 (New-Item -ItemType Directory -Force)
+# 7. 로그 파일 100MB 초과 시 자동 로테이션 (rename + 새 파일)
+```
+
+### 작업 스케줄러 등록 방법 (참고용, 스크립트 안에 주석으로 포함)
+
+```powershell
+# 등록:
+# schtasks /create /tn "MissionControl-Collector" /tr "powershell -ExecutionPolicy Bypass -File C:\Users\.박준희\Desktop\바이브코딩\projects\mission-control\scripts\collect-snapshots.ps1" /sc minute /mo 5 /f
+# 해제:
+# schtasks /delete /tn "MissionControl-Collector" /f
+```
+
+### 수정 금지 파일
+- `src/app/api/snapshot/route.ts` — 이미 완성됨
+- `src/app/api/trades-sync/route.ts` — 이미 완성됨
+- `src/lib/supabase-admin.ts` — 이미 완성됨
+
+---
+
 ## 멀티플랫폼 실행 컨텍스트 (공통)
 - 이 프로젝트는 Windows 원본 파일 + WSL `/mnt/c/...` 동일 파일 접근 구조를 전제로 운영한다.
 - 외부(노트북/모바일) 작업은 SSH -> WSL 경유가 기본이다.
