@@ -119,6 +119,8 @@ export function ConnectionMap() {
     };
 
     fetchHealth();
+    const interval = setInterval(fetchHealth, 30_000);
+    return () => clearInterval(interval);
   }, []);
 
   const connections = useMemo(() => {

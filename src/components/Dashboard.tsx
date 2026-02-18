@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { ProjectCard } from './ProjectCard';
 import { StatsBar } from './StatsBar';
 import { ActivityFeed } from './ActivityFeed';
@@ -17,6 +17,8 @@ import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { useNotifications } from '@/hooks/useNotifications';
 import type { ProjectSnapshot, ScanResult } from '@/types';
 import { RefreshCw, Loader2 } from 'lucide-react';
+
+const AUTO_REFRESH_MS = 60_000; // 60초
 
 type FilterCategory = 'all' | 'running' | 'dev' | 'legacy' | 'tool';
 type TabView =
@@ -36,6 +38,9 @@ export function Dashboard() {
   const [filter, setFilter] = useState<FilterCategory>('all');
   const [activeTab, setActiveTab] = useState<TabView>('overview');
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [countdown, setCountdown] = useState(AUTO_REFRESH_MS / 1000);
+  const countdownRef = useRef(AUTO_REFRESH_MS / 1000);
 
   // --- Notifications ---
 
@@ -108,6 +113,26 @@ export function Dashboard() {
     fetchData();
   }, [fetchData]);
 
+  // --- 자동 새로고침 (60초) ---
+
+  useEffect(() => {
+    countdownRef.current = AUTO_REFRESH_MS / 1000;
+    setCountdown(AUTO_REFRESH_MS / 1000);
+
+    const tick = setInterval(() => {
+      countdownRef.current -= 1;
+      setCountdown(countdownRef.current);
+      if (countdownRef.current <= 0) {
+        fetchData();
+        setRefreshKey((k) => k + 1);
+        countdownRef.current = AUTO_REFRESH_MS / 1000;
+        setCountdown(AUTO_REFRESH_MS / 1000);
+      }
+    }, 1000);
+
+    return () => clearInterval(tick);
+  }, [fetchData]);
+
   // --- 필터/정렬 ---
 
   const filtered =
@@ -173,11 +198,11 @@ export function Dashboard() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          {scannedAt && (
-            <span className="text-xs text-gray-400 dark:text-gray-500">
-              {new Date(scannedAt).toLocaleTimeString('ko-KR')} 스캔
-            </span>
-          )}
+          <span className="text-xs text-gray-400 dark:text-gray-500">
+            {scannedAt && `${new Date(scannedAt).toLocaleTimeString('ko-KR')} 스캔`}
+            {scannedAt && ' · '}
+            {countdown}s
+          </span>
           <button
             onClick={fetchData}
             disabled={loading}
@@ -194,7 +219,7 @@ export function Dashboard() {
       </div>
 
       {/* 통계 */}
-      {!loading && <StatsBar snapshots={snapshots} />}
+      {!loading && <StatsBar key={refreshKey} snapshots={snapshots} />}
 
       {/* 탭 내비게이션 */}
       <div className="mt-8 mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -244,6 +269,7 @@ export function Dashboard() {
         <>
           {activeTab === 'overview' && (
             <Overview
+              key={refreshKey}
               snapshots={snapshots}
               onNavigate={(tab) => setActiveTab(tab as TabView)}
             />
@@ -261,7 +287,7 @@ export function Dashboard() {
           )}
 
           {activeTab === 'monitoring' && (
-            <div className="grid gap-4 lg:grid-cols-2">
+            <div key={refreshKey} className="grid gap-4 lg:grid-cols-2">
               <MakeMoneyWidget />
               <EventWidget />
             </div>
