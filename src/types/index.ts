@@ -72,6 +72,33 @@ export interface FeedResult {
   scannedAt: string;
 }
 
+// 공통 상태 타입 (ProxyResponse, ServiceStatus 등)
+export * from './status';
+
+// --- Make Money ---
+
+export interface MakeMoneyPortfolio {
+  balance: number;
+  totalPnL: number;
+  openPositions: number;
+  winRate: number;
+}
+
+export interface MakeMoneyEngine {
+  name: string;
+  enabled: boolean;
+  lastRun: string;
+}
+
+export interface MakeMoneyTrade {
+  market: string;
+  side: string;
+  pnl: number;
+  timestamp: string;
+}
+
+// --- Task Board ---
+
 export interface TaskBoardItem {
   taskId: string;
   project: string;

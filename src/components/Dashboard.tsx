@@ -1,25 +1,56 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { ProjectCard } from './ProjectCard';
 import { StatsBar } from './StatsBar';
 import { ActivityFeed } from './ActivityFeed';
 import { ProductivityStats } from './ProductivityStats';
 import { ConnectionMap } from './ConnectionMap';
 import { TaskBoard } from './TaskBoard';
-import { BotStatus } from './BotStatus';
+import { MakeMoneyWidget } from './MakeMoneyWidget';
+import { EventWidget } from './EventWidget';
+import { OpenClawControl } from './OpenClawControl';
+import { Overview } from './Overview';
+import { CommandPalette } from './CommandPalette';
+import { NotificationBanner } from './NotificationBanner';
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
+import { useNotifications } from '@/hooks/useNotifications';
 import type { ProjectSnapshot, ScanResult } from '@/types';
 import { RefreshCw, Loader2 } from 'lucide-react';
 
 type FilterCategory = 'all' | 'running' | 'dev' | 'legacy' | 'tool';
-type TabView = 'projects' | 'feed' | 'stats' | 'connections' | 'board';
+type TabView =
+  | 'overview'
+  | 'projects'
+  | 'monitoring'
+  | 'openclaw'
+  | 'feed'
+  | 'stats'
+  | 'connections'
+  | 'board';
 
 export function Dashboard() {
   const [snapshots, setSnapshots] = useState<ProjectSnapshot[]>([]);
   const [scannedAt, setScannedAt] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<FilterCategory>('all');
-  const [activeTab, setActiveTab] = useState<TabView>('projects');
+  const [activeTab, setActiveTab] = useState<TabView>('overview');
+  const [paletteOpen, setPaletteOpen] = useState(false);
+
+  // --- Notifications ---
+
+  const notificationConfig = useMemo(
+    () => ({
+      makeMoneyLossThreshold: -10,
+      serviceDownAlert: true,
+      enabled: true,
+    }),
+    []
+  );
+
+  const { notifications, dismiss } = useNotifications(notificationConfig);
+
+  // --- Keyboard Shortcuts ---
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -35,9 +66,49 @@ export function Dashboard() {
     }
   }, []);
 
+  const shortcutConfig = useMemo(
+    () => ({
+      onTabChange: (tab: string) => setActiveTab(tab as TabView),
+      onRefresh: () => fetchData(),
+      onCommandPalette: () => setPaletteOpen((v) => !v),
+    }),
+    [fetchData]
+  );
+
+  useKeyboardShortcuts(shortcutConfig);
+
+  // --- CommandPalette action handler ---
+
+  const handlePaletteAction = useCallback(
+    (action: string) => {
+      switch (action) {
+        case 'quick_make_money_balance':
+          setActiveTab('monitoring');
+          break;
+        case 'quick_openclaw_status':
+          setActiveTab('openclaw');
+          break;
+        case 'quick_event_participation':
+          setActiveTab('monitoring');
+          break;
+        case 'focus_openclaw_command':
+          setActiveTab('openclaw');
+          break;
+        case 'refresh_all':
+          fetchData();
+          break;
+      }
+    },
+    [fetchData]
+  );
+
+  // --- 초기 로딩 ---
+
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  // --- 필터/정렬 ---
 
   const filtered =
     filter === 'all'
@@ -62,7 +133,10 @@ export function Dashboard() {
   ];
 
   const tabs: { label: string; value: TabView }[] = [
+    { label: 'Overview', value: 'overview' },
     { label: '프로젝트', value: 'projects' },
+    { label: '모니터링', value: 'monitoring' },
+    { label: 'OpenClaw', value: 'openclaw' },
     { label: '활동 피드', value: 'feed' },
     { label: '생산성', value: 'stats' },
     { label: '연동', value: 'connections' },
@@ -71,6 +145,23 @@ export function Dashboard() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      {/* NotificationBanner */}
+      <NotificationBanner notifications={notifications} onDismiss={dismiss} />
+
+      {/* CommandPalette */}
+      <CommandPalette
+        isOpen={paletteOpen}
+        onClose={() => setPaletteOpen(false)}
+        onNavigate={(tab) => {
+          setActiveTab(tab as TabView);
+          setPaletteOpen(false);
+        }}
+        onAction={(action) => {
+          handlePaletteAction(action);
+          setPaletteOpen(false);
+        }}
+      />
+
       {/* 헤더 */}
       <div className="mb-8 flex items-center justify-between">
         <div>
@@ -106,13 +197,13 @@ export function Dashboard() {
       {!loading && <StatsBar snapshots={snapshots} />}
 
       {/* 탭 내비게이션 */}
-      <div className="mt-8 mb-6 flex items-center justify-between">
-        <div className="flex gap-1 rounded-lg bg-gray-100 p-1 dark:bg-gray-800">
+      <div className="mt-8 mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex gap-1 overflow-x-auto rounded-lg bg-gray-100 p-1 dark:bg-gray-800">
           {tabs.map((tab) => (
             <button
               key={tab.value}
               onClick={() => setActiveTab(tab.value)}
-              className={`rounded-md px-4 py-1.5 text-sm font-medium transition-colors ${
+              className={`whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
                 activeTab === tab.value
                   ? 'bg-white text-gray-900 shadow-sm dark:bg-gray-700 dark:text-gray-100'
                   : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
@@ -151,19 +242,32 @@ export function Dashboard() {
         </div>
       ) : (
         <>
+          {activeTab === 'overview' && (
+            <Overview
+              snapshots={snapshots}
+              onNavigate={(tab) => setActiveTab(tab as TabView)}
+            />
+          )}
+
           {activeTab === 'projects' && (
-            <div className="space-y-6">
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {sorted.map((snapshot) => (
-                  <ProjectCard
-                    key={snapshot.project.folder}
-                    snapshot={snapshot}
-                  />
-                ))}
-              </div>
-              <BotStatus />
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {sorted.map((snapshot) => (
+                <ProjectCard
+                  key={snapshot.project.folder}
+                  snapshot={snapshot}
+                />
+              ))}
             </div>
           )}
+
+          {activeTab === 'monitoring' && (
+            <div className="grid gap-4 lg:grid-cols-2">
+              <MakeMoneyWidget />
+              <EventWidget />
+            </div>
+          )}
+
+          {activeTab === 'openclaw' && <OpenClawControl />}
 
           {activeTab === 'feed' && (
             <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
