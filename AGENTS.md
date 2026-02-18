@@ -88,12 +88,13 @@
 
 ### Push 규칙
 
-| 상황 | 규칙 |
+**Codex는 git commit/push를 절대 실행하지 않는다.** (글로벌 규칙, override 불가)
+
+| 상황 | 처리 |
 |------|------|
-| Codex 소유 파일만 수정 | Codex가 독립 push 가능 (Claude Code 승인 불필요) |
-| Claude Code 전용 파일 수정 | Claude Code만 push |
-| 공유 파일 수정 | 사전 조율 후 push |
-| 통합 파일에 Codex 모듈 연결 | Claude Code가 import + 연결 push |
+| Codex 작업 완료 | 변경 파일 + 검증 결과 보고 → Claude Code가 확인 후 commit/push |
+| Claude Code 작업 완료 | Claude Code가 직접 commit/push |
+| 통합 파일에 Codex 모듈 연결 | Claude Code가 import + 연결 + commit/push |
 
 ### 완료 기준 (DoD)
 
