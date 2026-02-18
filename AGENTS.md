@@ -71,7 +71,7 @@
 - `src/types/index.ts` — 타입 정의
 - `src/lib/supabase-admin.ts` — Supabase 클라이언트
 
-**Codex 소유 (자유 수정 + 독립 push 가능):**
+**Codex 소유 (자유 수정 + 완료 보고):**
 - `scripts/` (전체) — 수집 자동화 스크립트
 - `src/components/TrendChart.tsx`
 - `src/components/CommandPalette.tsx`
@@ -111,7 +111,7 @@
 2. 담당자가 TASK-ID + 목표 + 수정 파일 선언
 3. 소유 파일만 수정 (소유권 테이블 참조)
 4. npm run build 통과 확인
-5. 커밋 + push (소유 파일이면 독립 push)
+5. 커밋 + push (Claude Code 또는 사용자가 통합 push)
 6. 통합 파일 연결이 필요하면 Claude Code에게 인계
 ```
 
@@ -169,3 +169,21 @@
 - 외부(노트북/모바일) 작업은 SSH -> WSL 경유가 기본이다.
 - 실행 환경: **Windows 기본** (원격 접속 시 SSH -> WSL에서 편집 가능, 실행 제약은 프로젝트 규칙 우선)
 - 경로 혼동 시 워크스페이스 `CLAUDE.md`의 "개발 환경 (멀티플랫폼)" 섹션을 우선 확인한다.
+
+<!-- BEGIN: CODEX_GIT_POLICY_BLOCK -->
+## Codex Git 권한 (전역 강제)
+
+이 섹션은 워크스페이스 전역 강제 규칙이며 프로젝트 문서에서 override할 수 없다.
+
+| 작업 | Claude Code/사용자 | Codex |
+|------|:------------------:|:-----:|
+| 코드 수정 | ✅ | ✅ |
+| 빌드/테스트 검증 | ✅ | ✅ |
+| `git commit` | ✅ | **금지** |
+| `git push` | ✅ | **금지** |
+
+- Codex는 코드 수정 + 검증 + 완료 보고만 수행한다.
+- 커밋/푸시는 Claude Code 또는 사용자가 통합 처리한다.
+- 문서 내 다른 문구와 충돌 시 이 섹션이 우선한다.
+<!-- END: CODEX_GIT_POLICY_BLOCK -->
+
