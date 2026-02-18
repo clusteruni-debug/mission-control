@@ -6,6 +6,7 @@
 - **스택**: Next.js App Router + TypeScript + Tailwind
 - **역할**: 워크스페이스 관제 대시보드 (프로젝트/상태/연동/작업보드)
 - **실행**: Windows 기본 (`npm run dev`, `npm run build`)
+- **적용 범위**: `projects/mission-control/` 내부 파일만 해당. 워크스페이스 루트 또는 다른 프로젝트는 별도 규칙 적용.
 
 ## 작업 선언 포맷 (필수)
 작업 시작 전에 아래 4줄을 먼저 선언:
@@ -23,6 +24,7 @@
 - `src/components/` — 대시보드 위젯/탭 컴포넌트
 - `src/types/` — 공통 타입/상태 모델
 - `src/lib/constants.ts` — 프로젝트 메타/연결 정의
+- `scripts/` — 수집 자동화 스크립트 (Codex 관리)
 
 ## 핵심 규칙
 1. `src/types/status.ts`는 상태 단일 기준(SSOT)으로 사용
@@ -44,6 +46,89 @@
 - 서비스 오프라인 시 `status='offline'` + `error` 반환
 - 모바일(375px)에서도 레이아웃 깨짐 없음
 
+---
+
+## 협업 운영 프로토콜 (Claude Code ↔ Codex)
+
+> 이 프로토콜은 Mission Control 프로젝트 내에서 Claude Code와 Codex가 동시에 작업할 때의 운영 규칙이다.
+
+### 역할 분담 (RACI)
+
+| 역할 | Claude Code | Codex |
+|------|-------------|-------|
+| **통합 파일** (Dashboard, Overview, types) | Accountable + 수정 | 수정 금지 |
+| **독립 모듈** (TrendChart, CommandPalette, hooks 등) | 리뷰만 | Responsible + 수정 |
+| **API 라우트** (snapshot, trades-sync) | 리뷰만 | Responsible + 수정 |
+| **스크립트** (scripts/) | 리뷰만 | Responsible + 수정 |
+| **빌드 검증** (npm run build) | 최종 검증 | 작업 후 자체 검증 |
+
+### 파일 소유권
+
+**Claude Code 전용 (Codex 수정 금지):**
+- `src/components/Dashboard.tsx` — 통합 허브 (충돌 위험)
+- `src/components/Overview.tsx` — 4카드 + 타임라인 + TrendChart 연결
+- `src/types/status.ts` — 상태 SSOT
+- `src/types/index.ts` — 타입 정의
+- `src/lib/supabase-admin.ts` — Supabase 클라이언트
+
+**Codex 소유 (자유 수정 + 독립 push 가능):**
+- `scripts/` (전체) — 수집 자동화 스크립트
+- `src/components/TrendChart.tsx`
+- `src/components/CommandPalette.tsx`
+- `src/components/NotificationBanner.tsx`
+- `src/hooks/useKeyboardShortcuts.ts`
+- `src/hooks/useNotifications.ts`
+- `src/app/api/snapshot/route.ts`
+- `src/app/api/trades-sync/route.ts`
+
+**공유 파일 (수정 시 사전 조율 필수):**
+- `package.json` — 의존성 추가 시 상대방에게 알림
+- `AGENTS.md` — 양측 모두 읽고 참조. 수정은 Claude Code가 담당.
+- `CHANGELOG.md` — 각자 자기 작업분 기록
+
+### Push 규칙
+
+| 상황 | 규칙 |
+|------|------|
+| Codex 소유 파일만 수정 | Codex가 독립 push 가능 (Claude Code 승인 불필요) |
+| Claude Code 전용 파일 수정 | Claude Code만 push |
+| 공유 파일 수정 | 사전 조율 후 push |
+| 통합 파일에 Codex 모듈 연결 | Claude Code가 import + 연결 push |
+
+### 완료 기준 (DoD)
+
+| 수준 | 기준 | 적용 시점 |
+|------|------|-----------|
+| **최소** | `npm run build` 에러 0건 | 모든 커밋 |
+| **표준** | 최소 + 타입 에러 0건 + 콘솔 에러 0건 | 기능 완성 시 |
+| **전체** | 표준 + UI 검증 (localhost 브라우저 확인) | 마일스톤/릴리스 시 |
+
+### 작업 흐름
+
+```
+1. 사용자가 TASK-ID 배정 (또는 Codex 작업 큐에서 선택)
+2. 담당자가 TASK-ID + 목표 + 수정 파일 선언
+3. 소유 파일만 수정 (소유권 테이블 참조)
+4. npm run build 통과 확인
+5. 커밋 + push (소유 파일이면 독립 push)
+6. 통합 파일 연결이 필요하면 Claude Code에게 인계
+```
+
+### 긴급 수정 프로토콜
+
+빌드가 깨져 있거나 사용자가 긴급 수정을 요청한 경우:
+1. 소유권과 무관하게 수정 가능 (단, 최소 범위만)
+2. 커밋 메시지에 `hotfix:` 접두사 + 원래 소유자 태그 (예: `hotfix: TrendChart null guard (codex-owned)`)
+3. 수정 후 원래 소유자에게 알림 (다음 세션에서 확인)
+
+### 충돌 방지
+
+- 같은 파일을 동시에 수정하지 않기 (소유권 테이블이 이를 보장)
+- 소유권 불명확한 신규 파일은 생성 전 `AGENTS.md`에 소유자 등록
+- merge conflict 발생 시: 선점 커밋 우선, 후행 작업자가 rebase
+
+---
+
 ## 현재 완료 상태
 
 **Phase 1-4 통합 완료 (커밋 830d37c, 2026-02-18):**
@@ -51,118 +136,30 @@
 - 프록시 API 6개, 위젯 4개, Overview 통합 탭, Supabase 스냅샷 API 모두 구현됨
 - `npm run build` 에러 0건 확인됨
 
+**인프라 완료 (2026-02-18):**
+- Supabase mc_snapshots + mc_trades 테이블 생성 완료
+- .env.local 설정 완료 (SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, COLLECTOR_SECRET)
+- POST /api/snapshot → Supabase 저장 검증 완료
+- Windows Task Scheduler 5분 자동 수집 등록 완료
+
 ---
 
 ## Codex 작업 큐
 
-### MC-OPS-001: 스냅샷 수집 스크립트 생성
+### MC-OPS-001: 스냅샷 수집 스크립트 생성 — ✅ 완료
 
 - **TASK-ID**: `MC-OPS-001`
-- **목표**: 5분마다 POST /api/snapshot을 호출하는 PowerShell 수집 스크립트 생성
-- **수정 파일**: `scripts/collect-snapshots.ps1` (신규)
-- **완료 기준**:
-  1. `pwsh scripts/collect-snapshots.ps1` 실행 시 POST /api/snapshot 호출 성공
-  2. 로그를 `$env:TEMP\vibe-coding-logs\collector.log`에 남김
-  3. 인증: `Authorization: Bearer $COLLECTOR_SECRET` 헤더 포함
-  4. 에러 시 로그에 기록하고 비정상 종료하지 않음 (스케줄러가 다음 실행)
+- **상태**: 완료 (scripts/collect-snapshots.ps1 커밋됨)
 
-**구현 참고:**
-```powershell
-# 호출 대상: http://localhost:3000/api/snapshot
-# 인증: Bearer 토큰 (.env.local의 COLLECTOR_SECRET)
-# 로그: $env:TEMP\vibe-coding-logs\collector.log (append)
-# 타임스탬프 포함, 응답 status 기록
-```
-
-### MC-OPS-002: Task Scheduler 자동 등록 스크립트
+### MC-OPS-002: Task Scheduler 자동 등록 스크립트 — ✅ 완료
 
 - **TASK-ID**: `MC-OPS-002`
-- **목표**: collect-snapshots.ps1을 Windows Task Scheduler에 5분 간격으로 등록하는 헬퍼 스크립트
-- **수정 파일**: `scripts/setup-scheduler.ps1` (신규)
-- **완료 기준**:
-  1. 관리자 권한으로 실행 시 "VibeCoding-MC-Collector" 작업 등록
-  2. 5분 반복, 무기한 지속
-  3. 이미 등록되어 있으면 업데이트
-  4. 등록 결과를 콘솔에 출력
+- **상태**: 완료 (워크스페이스 scripts/setup-scheduler.ps1 생성 + 스케줄러 등록됨)
 
-**구현 참고:**
-```powershell
-# Task 이름: VibeCoding-MC-Collector
-# 트리거: 5분 반복 (RepetitionInterval)
-# 액션: pwsh -File <script-path>/collect-snapshots.ps1
-# 환경변수 COLLECTOR_SECRET는 스크립트 내에서 .env.local 파싱 or 인자로 전달
-```
-
-### MC-OPS-003: .env.local 파서 유틸 (선택)
+### MC-OPS-003: .env.local 파서 유틸 — 보류
 
 - **TASK-ID**: `MC-OPS-003`
-- **목표**: collect-snapshots.ps1이 .env.local에서 COLLECTOR_SECRET을 자동 읽도록 파서 함수 포함
-- **수정 파일**: `scripts/collect-snapshots.ps1` 내 함수로 포함
-- **완료 기준**: .env.local 파일에서 KEY=VALUE 파싱, `#` 주석 무시, 빈 줄 무시
-
----
-
-## 수정 금지 파일 (Codex)
-
-아래 파일은 Claude Code가 관리 중이므로 Codex는 수정하지 말 것:
-- `src/components/Dashboard.tsx` — 통합 허브 (충돌 위험)
-- `src/components/Overview.tsx` — 4카드 + 타임라인 + TrendChart 연결
-- `src/types/status.ts` — 상태 SSOT
-- `src/types/index.ts` — 타입 정의
-- `src/lib/supabase-admin.ts` — Supabase 클라이언트
-
-## Codex 수정 가능 파일
-
-- `scripts/` (전체) — 신규 스크립트
-- `src/components/TrendChart.tsx` — Codex 소유
-- `src/components/CommandPalette.tsx` — Codex 소유
-- `src/components/NotificationBanner.tsx` — Codex 소유
-- `src/hooks/useKeyboardShortcuts.ts` — Codex 소유
-- `src/hooks/useNotifications.ts` — Codex 소유
-- `src/app/api/snapshot/route.ts` — Codex 소유
-- `src/app/api/trades-sync/route.ts` — Codex 소유
-
----
-
-## Codex 작업 지시: MC-OPS-002 — 스냅샷 수집 스크립트
-
-> **TASK-ID**: MC-OPS-002
-> **목표**: `scripts/collect-snapshots.ps1` 작성 — Windows 작업 스케줄러에서 5분 간격 실행
-> **수정 파일**: `scripts/collect-snapshots.ps1` (신규)
-> **완료 기준**: (1) 스크립트 실행 시 POST 2건 호출 성공 (2) 로그 파일 정상 기록 (3) 에러 시 종료코드 0 유지 (스케줄러 안정성)
-
-### 스펙
-
-```powershell
-# scripts/collect-snapshots.ps1
-# 역할: POST /api/snapshot + POST /api/trades-sync 호출 (5분 스케줄러용)
-# 인증: COLLECTOR_SECRET 환경변수 → Bearer 토큰
-# 로그: $env:TEMP\vibe-coding-logs\collector.log (append, 타임스탬프 포함)
-# 에러 처리: HTTP 실패/타임아웃 시 로그에 기록하되 exit 0 유지
-
-# 필수 동작:
-# 1. $env:COLLECTOR_SECRET 없으면 경고 로그 + exit 0
-# 2. $baseUrl = "http://localhost:3000" (환경변수 MC_BASE_URL로 오버라이드 가능)
-# 3. POST $baseUrl/api/snapshot (Authorization: Bearer $secret)
-# 4. POST $baseUrl/api/trades-sync (Authorization: Bearer $secret)
-# 5. 각 호출 결과 (status code, response time) 로그
-# 6. 로그 디렉토리 자동 생성 (New-Item -ItemType Directory -Force)
-# 7. 로그 파일 100MB 초과 시 자동 로테이션 (rename + 새 파일)
-```
-
-### 작업 스케줄러 등록 방법 (참고용, 스크립트 안에 주석으로 포함)
-
-```powershell
-# 등록:
-# schtasks /create /tn "MissionControl-Collector" /tr "powershell -ExecutionPolicy Bypass -File C:\Users\.박준희\Desktop\바이브코딩\projects\mission-control\scripts\collect-snapshots.ps1" /sc minute /mo 5 /f
-# 해제:
-# schtasks /delete /tn "MissionControl-Collector" /f
-```
-
-### 수정 금지 파일
-- `src/app/api/snapshot/route.ts` — 이미 완성됨
-- `src/app/api/trades-sync/route.ts` — 이미 완성됨
-- `src/lib/supabase-admin.ts` — 이미 완성됨
+- **상태**: 보류 (현재 COLLECTOR_SECRET 환경변수로 전달 방식 사용 중, 필요 시 추가)
 
 ---
 
