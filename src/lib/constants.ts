@@ -126,7 +126,7 @@ export const PROJECTS: ProjectConfig[] = [
     techStack: ['Python', 'python-telegram-bot', 'Claude Code CLI'],
     category: 'tool',
     platform: 'wsl',
-    runCmd: 'cd ~/바이브코딩/projects/claude-code-bot && python bot.py',
+    runCmd: 'cd /mnt/c/vibe/projects/claude-code-bot && python bot.py',
   },
   {
     name: 'Claude Skills',

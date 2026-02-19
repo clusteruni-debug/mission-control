@@ -4,7 +4,7 @@ param(
 )
 
 # 등록:
-# schtasks /create /tn "MissionControl-Collector" /tr "powershell -ExecutionPolicy Bypass -File C:\Users\.박준희\Desktop\바이브코딩\projects\mission-control\scripts\collect-snapshots.ps1" /sc minute /mo 5 /f
+# schtasks /create /tn "MissionControl-Collector" /tr "powershell -ExecutionPolicy Bypass -File C:\vibe\projects\mission-control\scripts\collect-snapshots.ps1" /sc minute /mo 5 /f
 # 해제:
 # schtasks /delete /tn "MissionControl-Collector" /f
 
