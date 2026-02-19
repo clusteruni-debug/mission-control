@@ -1,5 +1,13 @@
 # Mission Control — CHANGELOG
 
+## 세션 5 (2026-02-20) — 빌드 네트워크 의존 리스크 완화 (Codex OPS-RISK-FIX-ALL-0220)
+
+### ✅ 완료
+- `src/app/layout.tsx`
+  - `next/font/google`(`Geist`, `Geist_Mono`) import 제거
+  - body 클래스에서 폰트 변수 의존 제거
+  - 외부 Google Fonts fetch 없이 기본 폰트 스택으로 동작하도록 정리
+
 ## 세션 3-4 (2026-02-17~18) — Phase 1-4 통합 관제 시스템 구축
 
 ### ✅ 완료
