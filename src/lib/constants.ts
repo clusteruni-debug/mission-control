@@ -15,6 +15,10 @@ export const PROJECTS: ProjectConfig[] = [
     runCmd: 'npx serve -p 5000',
     port: 5000,
     connections: ['telegram-event-bot', 'web3-budget-app', 'article-editor'],
+    phase: '운영 안정화',
+    completionPct: 85,
+    nextTasks: ['습관 트래커 확장', '스트릭 시각화'],
+    priority: 'medium',
   },
   {
     name: 'Kimchi Premium',
@@ -26,6 +30,10 @@ export const PROJECTS: ProjectConfig[] = [
     platform: 'windows',
     runCmd: 'cd react-app && npm run dev',
     port: 5173,
+    phase: 'v5.5 운영중',
+    completionPct: 90,
+    nextTasks: ['알림 임계값 커스텀'],
+    priority: 'maintenance',
   },
   {
     name: 'Web3 가계부',
@@ -38,6 +46,10 @@ export const PROJECTS: ProjectConfig[] = [
     runCmd: 'npx vite --port 5173',
     port: 5173,
     connections: ['To-do-list-for-adhd'],
+    phase: '운영 안정화',
+    completionPct: 80,
+    nextTasks: ['부부 공유 기능', '세금 계산기'],
+    priority: 'medium',
   },
   {
     name: 'Telegram Bot',
@@ -50,6 +62,10 @@ export const PROJECTS: ProjectConfig[] = [
     runCmd: 'python web.py',
     port: 5001,
     connections: ['To-do-list-for-adhd'],
+    phase: '운영 안정화',
+    completionPct: 90,
+    nextTasks: ['경로 안정화 완료 검증'],
+    priority: 'maintenance',
   },
   {
     name: 'Baby Care',
@@ -61,6 +77,10 @@ export const PROJECTS: ProjectConfig[] = [
     platform: 'windows',
     runCmd: 'npm run dev',
     port: 3000,
+    phase: 'MVP 완료',
+    completionPct: 75,
+    nextTasks: ['통계 대시보드', '가족 공유'],
+    priority: 'medium',
   },
   {
     name: 'Article Editor',
@@ -73,6 +93,10 @@ export const PROJECTS: ProjectConfig[] = [
     runCmd: 'npm run dev',
     port: 3000,
     connections: ['To-do-list-for-adhd'],
+    phase: 'MVP 완료',
+    completionPct: 70,
+    nextTasks: ['AI 글쓰기 보조', '퍼블리싱 연동'],
+    priority: 'low',
   },
   {
     name: 'Text RPG',
@@ -84,6 +108,10 @@ export const PROJECTS: ProjectConfig[] = [
     platform: 'windows',
     runCmd: 'npm run dev',
     port: 5173,
+    phase: '콘텐츠 확장 완료',
+    completionPct: 65,
+    nextTasks: ['세이브/로드', '사운드 효과'],
+    priority: 'low',
   },
   {
     name: 'Portfolio',
@@ -95,6 +123,10 @@ export const PROJECTS: ProjectConfig[] = [
     platform: 'windows',
     runCmd: 'npm run dev',
     port: 5173,
+    phase: '리디자인 완료',
+    completionPct: 85,
+    nextTasks: ['GH Pages 배포', '프로젝트 상세 페이지'],
+    priority: 'medium',
   },
   {
     name: 'Saitama Training',
@@ -106,6 +138,10 @@ export const PROJECTS: ProjectConfig[] = [
     platform: 'windows',
     runCmd: 'npm run dev',
     port: 5173,
+    phase: 'MVP 완료',
+    completionPct: 60,
+    nextTasks: ['운동 통계', '친구 경쟁'],
+    priority: 'low',
   },
   {
     name: 'Make Money',
@@ -117,6 +153,10 @@ export const PROJECTS: ProjectConfig[] = [
     platform: 'windows',
     runCmd: 'cd server && node index.js',
     port: 3001,
+    phase: '엔진 튜닝',
+    completionPct: 70,
+    nextTasks: ['시그널 가뭄 해소', 'dry-run 모드', '엔진 성과 분석'],
+    priority: 'high',
   },
   {
     name: 'OpenClaw',
@@ -127,6 +167,10 @@ export const PROJECTS: ProjectConfig[] = [
     category: 'tool',
     platform: 'wsl',
     runCmd: 'cd /mnt/c/vibe/projects/claude-code-bot && python bot.py',
+    phase: '인프라 완성 / UX 개선 중',
+    completionPct: 50,
+    nextTasks: ['/dashboard 명령', '에러 해석 보고', '일일 보고서'],
+    priority: 'high',
   },
   {
     name: 'Claude Skills',
@@ -137,6 +181,10 @@ export const PROJECTS: ProjectConfig[] = [
     category: 'tool',
     platform: 'both',
     runCmd: './setup.sh',
+    phase: '운영중',
+    completionPct: 90,
+    nextTasks: ['스킬 카탈로그 정리'],
+    priority: 'maintenance',
   },
   {
     name: 'Mission Control',
@@ -149,6 +197,10 @@ export const PROJECTS: ProjectConfig[] = [
     platform: 'windows',
     runCmd: 'npm run dev',
     port: 3000,
+    phase: '로드맵 뷰 추가 중',
+    completionPct: 75,
+    nextTasks: ['phase/진행바 표시', '우선순위 정렬'],
+    priority: 'high',
   },
 ];
 
@@ -164,4 +216,18 @@ export const CATEGORY_COLORS: Record<ProjectConfig['category'], string> = {
   dev: 'bg-blue-500',
   legacy: 'bg-gray-500',
   tool: 'bg-purple-500',
+};
+
+export const PRIORITY_LABELS: Record<import('@/types').ProjectPriority, string> = {
+  high: '높음',
+  medium: '보통',
+  low: '낮음',
+  maintenance: '유지보수',
+};
+
+export const PRIORITY_COLORS: Record<import('@/types').ProjectPriority, string> = {
+  high: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300',
+  medium: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300',
+  low: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
+  maintenance: 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300',
 };

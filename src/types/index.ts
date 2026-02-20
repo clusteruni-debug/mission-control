@@ -1,5 +1,7 @@
 export type ProjectPlatform = 'windows' | 'wsl' | 'both';
 
+export type ProjectPriority = 'high' | 'medium' | 'low' | 'maintenance';
+
 export interface ProjectConfig {
   name: string;
   folder: string;
@@ -12,6 +14,14 @@ export interface ProjectConfig {
   platform?: ProjectPlatform;
   runCmd?: string;
   port?: number;
+  /** 현재 개발 단계 (예: "운영 안정화", "Phase 1", "MVP 완료") */
+  phase?: string;
+  /** 전체 완성도 퍼센트 (0-100) */
+  completionPct?: number;
+  /** 다음 할 일 목록 (최대 3개) */
+  nextTasks?: string[];
+  /** 우선순위 */
+  priority?: ProjectPriority;
 }
 
 export interface GitHubCommit {

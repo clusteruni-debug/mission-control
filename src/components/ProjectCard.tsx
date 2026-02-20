@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { CATEGORY_LABELS, CATEGORY_COLORS } from '@/lib/constants';
+import { CATEGORY_LABELS, CATEGORY_COLORS, PRIORITY_LABELS, PRIORITY_COLORS } from '@/lib/constants';
 import { formatRelativeDate, cn } from '@/lib/utils';
 import type { ProjectSnapshot } from '@/types';
 import {
@@ -62,6 +62,42 @@ export function ProjectCard({ snapshot }: ProjectCardProps) {
           {CATEGORY_LABELS[project.category]}
         </span>
       </div>
+
+      {/* Phase + 진행바 */}
+      {project.phase && (
+        <div className="mb-3">
+          <div className="mb-1.5 flex items-center gap-2">
+            <span className="text-xs font-medium text-gray-600 dark:text-gray-300">
+              {project.phase}
+            </span>
+            {project.priority && (
+              <span className={cn('rounded px-1.5 py-0.5 text-[10px] font-medium', PRIORITY_COLORS[project.priority])}>
+                {PRIORITY_LABELS[project.priority]}
+              </span>
+            )}
+            {typeof project.completionPct === 'number' && (
+              <span className="ml-auto text-xs font-semibold text-gray-500 dark:text-gray-400">
+                {project.completionPct}%
+              </span>
+            )}
+          </div>
+          {typeof project.completionPct === 'number' && (
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+              <div
+                className={cn(
+                  'h-full rounded-full transition-all',
+                  project.completionPct >= 80
+                    ? 'bg-green-500'
+                    : project.completionPct >= 50
+                      ? 'bg-blue-500'
+                      : 'bg-yellow-500'
+                )}
+                style={{ width: `${project.completionPct}%` }}
+              />
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Git 정보 */}
       <div className="mb-3 space-y-1.5">
@@ -147,6 +183,20 @@ export function ProjectCard({ snapshot }: ProjectCardProps) {
       {project.runCmd && (
         <div className="mt-2 rounded bg-gray-50 px-2 py-1 text-xs text-gray-500 dark:bg-gray-800 dark:text-gray-400">
           {project.runCmd}
+        </div>
+      )}
+
+      {/* Next Tasks */}
+      {project.nextTasks && project.nextTasks.length > 0 && (
+        <div className="mt-2">
+          <ul className="space-y-0.5">
+            {project.nextTasks.map((task) => (
+              <li key={task} className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+                <span className="h-1 w-1 flex-shrink-0 rounded-full bg-gray-300 dark:bg-gray-600" />
+                {task}
+              </li>
+            ))}
+          </ul>
         </div>
       )}
 
