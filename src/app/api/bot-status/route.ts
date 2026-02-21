@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 export const revalidate = 300; // 5분 캐시
 
-// health_api.py 실제 응답 형식
+// Watch Bot (구 OpenClaw) health_api.py 실제 응답 형식
 export interface BotHealthResponse {
   recent_tasks: {
     id: number;
@@ -43,7 +43,7 @@ export async function GET() {
     const data: BotHealthResponse = await res.json();
     return NextResponse.json({ status: 'online', ...data });
   } catch {
-    // WSL 환경 아닐 때 or 봇 미실행 시 graceful fallback
+    // WSL 환경 아닐 때 or Watch Bot 미실행 시 graceful fallback
     return NextResponse.json({
       status: 'offline',
       recent_tasks: [],

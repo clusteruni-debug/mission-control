@@ -26,7 +26,7 @@ interface HealthSnapshot {
 const SERVICE_BY_FOLDER: Record<string, string> = {
   'make-money-project': 'make-money',
   'telegram-event-bot': 'telegram-bot',
-  'claude-code-bot': 'openclaw',
+  'claude-code-bot': 'watchbot',
 };
 
 function statusWeight(status: ServiceStatus): number {
@@ -108,12 +108,12 @@ export function ConnectionMap() {
               fetchedAt: new Date().toISOString(),
               error: 'Telegram Bot 연결 실패',
             },
-        openclaw: requests[2].status === 'fulfilled'
+        watchbot: requests[2].status === 'fulfilled'
           ? toSnapshot(requests[2].value)
           : {
               status: 'offline',
               fetchedAt: new Date().toISOString(),
-              error: 'OpenClaw 연결 실패',
+              error: 'Watch Bot 연결 실패',
             },
       });
     };

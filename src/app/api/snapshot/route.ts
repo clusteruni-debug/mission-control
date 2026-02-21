@@ -132,7 +132,7 @@ export async function POST(request: NextRequest) {
 
     const [makeMoney, openclaw, events] = await Promise.all([
       fetchJsonOrOffline(`${origin}/api/make-money?path=portfolio`, 'make-money'),
-      fetchJsonOrOffline(`${origin}/api/bot-status`, 'openclaw'),
+      fetchJsonOrOffline(`${origin}/api/bot-status`, 'watchbot'),
       fetchJsonOrOffline(`${origin}/api/telegram-bot?path=stats`, 'telegram'),
     ]);
 

@@ -39,7 +39,7 @@ interface MakeMoneyOverview {
   agent: string;
 }
 
-interface OpenClawOverview {
+interface WatchBotOverview {
   status: string;
   success_rate: number;
 }
@@ -51,7 +51,7 @@ interface EventOverview {
 }
 
 interface TimelineItem {
-  type: 'commit' | 'openclaw' | 'trade' | 'event';
+  type: 'commit' | 'watchbot' | 'trade' | 'event';
   title: string;
   detail: string;
   timestamp: string;
@@ -83,11 +83,11 @@ const TIMELINE_META: Record<
     bg: 'bg-blue-100 dark:bg-blue-900/40',
     label: '커밋',
   },
-  openclaw: {
+  watchbot: {
     Icon: Cpu,
     color: 'text-purple-500 dark:text-purple-400',
     bg: 'bg-purple-100 dark:bg-purple-900/40',
-    label: 'OpenClaw',
+    label: 'Watch Bot',
   },
   trade: {
     Icon: TrendingUp,
@@ -110,7 +110,7 @@ async function fetchTimelineItems(): Promise<TimelineItem[]> {
 
   const results = await Promise.allSettled([
     fetch('/api/feed').then((r) => r.json()),
-    fetch('/api/openclaw-command?path=history').then((r) => r.json()),
+    fetch('/api/bot-status').then((r) => r.json()),
     fetch('/api/make-money?path=trades').then((r) => r.json()),
     fetch('/api/telegram-bot?path=analyzed').then((r) => r.json()),
   ]);
@@ -131,18 +131,18 @@ async function fetchTimelineItems(): Promise<TimelineItem[]> {
     }
   }
 
-  // OpenClaw 히스토리
+  // Watch Bot 최근 작업
   if (results[1].status === 'fulfilled') {
     const res = results[1].value;
-    const tasks = res?.data?.tasks ?? res?.data ?? [];
+    const tasks = res?.recent_tasks ?? [];
     if (Array.isArray(tasks)) {
       for (const t of tasks.slice(0, 5)) {
-        if (!t.completed_at) continue;
+        if (!t.timestamp) continue;
         items.push({
-          type: 'openclaw',
-          title: t.project || 'task',
+          type: 'watchbot',
+          title: 'Watch Bot',
           detail: t.task || '',
-          timestamp: t.completed_at,
+          timestamp: t.timestamp,
         });
       }
     }
@@ -237,10 +237,10 @@ function extractProjectCountSeries(rows: SnapshotRow[]): TrendPoint[] {
 export function Overview({ snapshots, onNavigate }: OverviewProps) {
   // 요약 카드 데이터
   const [makeMoney, setMakeMoney] = useState<MakeMoneyOverview | null>(null);
-  const [openClaw, setOpenClaw] = useState<OpenClawOverview | null>(null);
+  const [watchBot, setWatchBot] = useState<WatchBotOverview | null>(null);
   const [events, setEvents] = useState<EventOverview | null>(null);
   const [mmStatus, setMmStatus] = useState<ServiceStatus>('unknown');
-  const [clawStatus, setClawStatus] = useState<ServiceStatus>('unknown');
+  const [watchBotStatus, setWatchBotStatus] = useState<ServiceStatus>('unknown');
   const [eventStatus, setEventStatus] = useState<ServiceStatus>('unknown');
 
   // 통합 타임라인
@@ -300,21 +300,21 @@ export function Overview({ snapshots, onNavigate }: OverviewProps) {
       }
     });
 
-    // OpenClaw
+    // Watch Bot
     fetch('/api/bot-status')
       .then((r) => r.json())
       .then((data) => {
         if (data.status === 'online') {
-          setOpenClaw({
+          setWatchBot({
             status: 'online',
             success_rate: data.success_rate ?? 0,
           });
-          setClawStatus('online');
+          setWatchBotStatus('online');
         } else {
-          setClawStatus('offline');
+          setWatchBotStatus('offline');
         }
       })
-      .catch(() => setClawStatus('offline'));
+      .catch(() => setWatchBotStatus('offline'));
 
     // Events
     fetch('/api/telegram-bot?path=stats')
@@ -417,17 +417,17 @@ export function Overview({ snapshots, onNavigate }: OverviewProps) {
           : [],
     },
     {
-      title: 'OpenClaw',
-      tab: 'openclaw',
+      title: 'Watch Bot',
+      tab: 'monitoring',
       icon: Bot,
-      status: clawStatus,
+      status: watchBotStatus,
       rows:
-        clawStatus === 'online' && openClaw
+        watchBotStatus === 'online' && watchBot
           ? [
               { label: '상태', value: 'Online', color: 'text-emerald-500' },
               {
                 label: '성공률',
-                value: `${Math.round(openClaw.success_rate)}%`,
+                value: `${Math.round(watchBot.success_rate)}%`,
               },
               { label: '현재', value: 'idle' },
             ]

@@ -9,7 +9,7 @@ import { ConnectionMap } from './ConnectionMap';
 import { TaskBoard } from './TaskBoard';
 import { MakeMoneyWidget } from './MakeMoneyWidget';
 import { EventWidget } from './EventWidget';
-import { OpenClawControl } from './OpenClawControl';
+import { WatchBotStatusCard } from './BotStatus';
 import { Overview } from './Overview';
 import { CommandPalette } from './CommandPalette';
 import { NotificationBanner } from './NotificationBanner';
@@ -25,10 +25,7 @@ type TabView =
   | 'overview'
   | 'projects'
   | 'monitoring'
-  | 'openclaw'
-  | 'feed'
-  | 'stats'
-  | 'connections'
+  | 'activity'
   | 'board';
 
 export function Dashboard() {
@@ -94,14 +91,11 @@ export function Dashboard() {
         case 'quick_make_money_balance':
           setActiveTab('monitoring');
           break;
-        case 'quick_openclaw_status':
-          setActiveTab('openclaw');
+        case 'quick_watchbot_status':
+          setActiveTab('monitoring');
           break;
         case 'quick_event_participation':
           setActiveTab('monitoring');
-          break;
-        case 'focus_openclaw_command':
-          setActiveTab('openclaw');
           break;
         case 'refresh_all':
           fetchData();
@@ -165,10 +159,7 @@ export function Dashboard() {
     { label: 'Overview', value: 'overview' },
     { label: '프로젝트', value: 'projects' },
     { label: '모니터링', value: 'monitoring' },
-    { label: 'OpenClaw', value: 'openclaw' },
-    { label: '활동 피드', value: 'feed' },
-    { label: '생산성', value: 'stats' },
-    { label: '연동', value: 'connections' },
+    { label: '활동', value: 'activity' },
     { label: '작업 보드', value: 'board' },
   ];
 
@@ -291,38 +282,37 @@ export function Dashboard() {
           )}
 
           {activeTab === 'monitoring' && (
-            <div key={refreshKey} className="grid gap-4 lg:grid-cols-2">
-              <MakeMoneyWidget />
-              <EventWidget />
+            <div key={refreshKey} className="space-y-4">
+              <div className="grid gap-4 lg:grid-cols-2">
+                <MakeMoneyWidget />
+                <EventWidget />
+              </div>
+              <div className="grid gap-4 lg:grid-cols-2">
+                <WatchBotStatusCard />
+                <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
+                  <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+                    프로젝트 간 연동 현황
+                  </h2>
+                  <ConnectionMap />
+                </div>
+              </div>
             </div>
           )}
 
-          {activeTab === 'openclaw' && <OpenClawControl />}
-
-          {activeTab === 'feed' && (
-            <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
-              <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
-                전체 활동 타임라인
-              </h2>
-              <ActivityFeed />
-            </div>
-          )}
-
-          {activeTab === 'stats' && (
-            <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
-              <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
-                생산성 통계
-              </h2>
-              <ProductivityStats snapshots={snapshots} />
-            </div>
-          )}
-
-          {activeTab === 'connections' && (
-            <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
-              <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
-                프로젝트 간 연동 현황
-              </h2>
-              <ConnectionMap />
+          {activeTab === 'activity' && (
+            <div className="space-y-6">
+              <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
+                <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  생산성 통계
+                </h2>
+                <ProductivityStats snapshots={snapshots} />
+              </div>
+              <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
+                <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  활동 타임라인
+                </h2>
+                <ActivityFeed />
+              </div>
             </div>
           )}
 

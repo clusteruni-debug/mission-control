@@ -60,7 +60,7 @@ function formatRelativeTime(dateStr: string): string {
   return `${Math.floor(hours / 24)}일 전`;
 }
 
-export function BotStatus() {
+export function WatchBotStatusCard() {
   const [data, setData] = useState<BotHealthData | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -110,7 +110,7 @@ export function BotStatus() {
         <div className="flex items-center gap-2">
           <Bot className="h-5 w-5 text-gray-600 dark:text-gray-300" />
           <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-            OpenClaw 봇 상태
+            Watch Bot 상태
           </h2>
           <span
             className={cn(
@@ -139,7 +139,7 @@ export function BotStatus() {
 
       {!isOnline ? (
         <p className="py-4 text-center text-sm text-gray-500 dark:text-gray-400">
-          봇이 실행되지 않고 있습니다. WSL에서 health_api.py를 실행하세요.
+          Watch Bot이 오프라인입니다. WSL에서 health_api.py를 실행하세요.
         </p>
       ) : (
         <div className="space-y-4">

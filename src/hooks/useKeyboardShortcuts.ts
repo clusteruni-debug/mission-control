@@ -12,11 +12,8 @@ const TAB_BY_KEY: Record<string, string> = {
   '1': 'overview',
   '2': 'projects',
   '3': 'monitoring',
-  '4': 'openclaw',
-  '5': 'feed',
-  '6': 'stats',
-  '7': 'connections',
-  '8': 'board',
+  '4': 'activity',
+  '5': 'board',
 };
 
 function isTypingTarget(target: EventTarget | null): boolean {
