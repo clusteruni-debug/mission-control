@@ -2,7 +2,12 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { cn, formatRelativeDate } from '@/lib/utils';
-import { TrendChart } from './TrendChart';
+import dynamic from 'next/dynamic';
+
+const TrendChart = dynamic(() => import('./TrendChart').then(m => ({ default: m.TrendChart })), {
+  ssr: false,
+  loading: () => <div className="h-52 animate-pulse rounded-xl bg-gray-100 dark:bg-gray-800" />,
+});
 import type { ProjectSnapshot } from '@/types';
 import type { ServiceStatus } from '@/types/status';
 import {

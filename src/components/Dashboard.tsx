@@ -61,9 +61,13 @@ export function Dashboard() {
     setLoading(true);
     try {
       const res = await fetch('/api/scan');
+      if (!res.ok) {
+        console.error('스캔 API 오류:', res.status);
+        return;
+      }
       const data: ScanResult = await res.json();
-      setSnapshots(data.snapshots);
-      setScannedAt(data.scannedAt);
+      setSnapshots(Array.isArray(data?.snapshots) ? data.snapshots : []);
+      setScannedAt(data?.scannedAt ?? null);
     } catch (err) {
       console.error('스캔 데이터 로딩 실패:', err);
     } finally {
