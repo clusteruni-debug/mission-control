@@ -103,7 +103,7 @@ export function EventWidget() {
   }, [statsRes, healthRes, analyzedRes]);
 
   const stats = statsRes?.data;
-  const analyzed = analyzedRes?.data ?? [];
+  const analyzed = Array.isArray(analyzedRes?.data) ? analyzedRes.data : [];
   const participation = stats && stats.total > 0 ? Math.round((stats.participated / stats.total) * 100) : null;
   const unanalyzedCount = stats ? Math.max(0, stats.total - stats.analyzed) : analyzed.filter((x) => !x.analysis).length;
   const urgentItems = analyzed

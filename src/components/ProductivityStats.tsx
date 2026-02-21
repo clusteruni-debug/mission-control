@@ -21,7 +21,7 @@ export function ProductivityStats({ snapshots }: ProductivityStatsProps) {
 
   // streak 계산: 연속 커밋 일수 (최근 커밋 기반)
   const allCommitDates = snapshots
-    .flatMap((s) => s.git.recentCommits.map((c) => c.date))
+    .flatMap((s) => (s.git.recentCommits ?? []).map((c) => c.date))
     .map((d) => new Date(d).toDateString());
 
   const uniqueDates = [...new Set(allCommitDates)].sort(

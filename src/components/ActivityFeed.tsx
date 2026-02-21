@@ -12,7 +12,7 @@ export function ActivityFeed() {
   useEffect(() => {
     fetch('/api/feed')
       .then((res) => res.json())
-      .then((data: FeedResult) => setFeed(data.feed))
+      .then((data: FeedResult) => setFeed(Array.isArray(data?.feed) ? data.feed : []))
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);

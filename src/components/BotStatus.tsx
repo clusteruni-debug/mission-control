@@ -68,8 +68,16 @@ export function WatchBotStatusCard() {
     setLoading(true);
     try {
       const res = await fetch('/api/bot-status');
-      const json: BotHealthData = await res.json();
-      setData(json);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json = await res.json();
+      setData({
+        status: json.status ?? 'offline',
+        recent_tasks: Array.isArray(json.recent_tasks) ? json.recent_tasks : [],
+        success_rate: typeof json.success_rate === 'number' ? json.success_rate : 0,
+        last_run: json.last_run ?? null,
+        scheduled: Array.isArray(json.scheduled) ? json.scheduled : [],
+        uptime: typeof json.uptime === 'number' ? json.uptime : 0,
+      });
     } catch {
       setData({
         status: 'offline',

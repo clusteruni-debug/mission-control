@@ -307,7 +307,7 @@ export function MakeMoneyWidget() {
                               : 'text-red-500'
                         )}
                       >
-                        {isOpen ? 'Open' : formatPnL(pnl!)}
+                        {isOpen ? 'Open' : pnl !== null ? formatPnL(pnl) : '--'}
                       </span>
                       <span className="shrink-0 text-xs text-gray-400">
                         {formatRelativeTime(trade.entry_timestamp)}

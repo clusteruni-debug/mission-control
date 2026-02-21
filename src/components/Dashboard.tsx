@@ -139,9 +139,9 @@ export function Dashboard() {
       : snapshots.filter((s) => s.project.category === filter);
 
   const sorted = [...filtered].sort((a, b) => {
-    const catOrder = { running: 0, dev: 1, tool: 2, legacy: 3 };
+    const catOrder: Record<string, number> = { running: 0, dev: 1, tool: 2, legacy: 3 };
     const catDiff =
-      catOrder[a.project.category] - catOrder[b.project.category];
+      (catOrder[a.project.category] ?? 99) - (catOrder[b.project.category] ?? 99);
     if (catDiff !== 0) return catDiff;
     const aDays = a.git.daysSinceCommit ?? 999;
     const bDays = b.git.daysSinceCommit ?? 999;

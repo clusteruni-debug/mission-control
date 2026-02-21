@@ -217,7 +217,7 @@ export default function ProjectDetailPage() {
 
       {/* 커밋 히스토리 */}
       <Section title="최근 커밋">
-        {git.recentCommits.length === 0 ? (
+        {!git.recentCommits?.length ? (
           <p className="text-sm text-gray-400">커밋 기록이 없습니다</p>
         ) : (
           <div className="space-y-0">

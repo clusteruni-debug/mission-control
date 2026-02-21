@@ -354,7 +354,7 @@ export function Overview({ snapshots, onNavigate }: OverviewProps) {
   const todayCommits = snapshots.reduce(
     (sum, s) =>
       sum +
-      s.git.recentCommits.filter((c) => c.date.startsWith(todayStr)).length,
+      (s.git.recentCommits ?? []).filter((c) => c.date.startsWith(todayStr)).length,
     0
   );
 
@@ -395,15 +395,19 @@ export function Overview({ snapshots, onNavigate }: OverviewProps) {
           ? [
               {
                 label: '잔고',
-                value: `$${makeMoney.balance.toFixed(2)}`,
+                value: typeof makeMoney.balance === 'number' ? `$${makeMoney.balance.toFixed(2)}` : '--',
               },
               {
                 label: '총 P&L',
-                value: `${makeMoney.totalPnL >= 0 ? '+' : '-'}$${Math.abs(makeMoney.totalPnL).toFixed(2)}`,
+                value: typeof makeMoney.totalPnL === 'number'
+                  ? `${makeMoney.totalPnL >= 0 ? '+' : '-'}$${Math.abs(makeMoney.totalPnL).toFixed(2)}`
+                  : '--',
                 color:
-                  makeMoney.totalPnL >= 0
-                    ? 'text-emerald-500'
-                    : 'text-red-500',
+                  typeof makeMoney.totalPnL === 'number'
+                    ? makeMoney.totalPnL >= 0
+                      ? 'text-emerald-500'
+                      : 'text-red-500'
+                    : undefined,
               },
               {
                 label: '에이전트',

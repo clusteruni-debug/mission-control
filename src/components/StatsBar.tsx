@@ -82,7 +82,9 @@ export function StatsBar({ snapshots }: StatsBarProps) {
 
   const pnlValue = pnlOnline ? pnlRes?.data?.totalPnL ?? null : null;
   const eventRate =
-    eventOnline && eventRes?.data && eventRes.data.total > 0
+    eventOnline && eventRes?.data &&
+    typeof eventRes.data.total === 'number' && eventRes.data.total > 0 &&
+    typeof eventRes.data.participated === 'number'
       ? Math.round((eventRes.data.participated / eventRes.data.total) * 100)
       : null;
 
