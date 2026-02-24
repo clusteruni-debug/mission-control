@@ -1,6 +1,6 @@
 # 바이브코딩 워크스페이스 — Claude Web Handoff
 
-> **자동 생성**: 2026-02-21 20:21 KST
+> **자동 생성**: 2026-02-24 11:57 KST
 > **용도**: Claude.ai web에 공유하여 전체 컨텍스트를 전달
 
 ---
@@ -40,18 +40,18 @@
 
 | # | 프로젝트 | 스택 | 배포 | 최근 커밋 | 경과일 |
 |---|----------|------|------|----------|--------|
-| 1 | **X Article Editor** | Next.js 16 + TS + Supabase + TipTap | Vercel | refactor: CLAUDE.md 압축 + agent_docs 도메인맵 추가 | 1일 |
-| 2 | **자산관리 (Web3 가계부)** | Vite + Vanilla JS + Supabase + Chart.js | Vercel | refactor: CLAUDE.md 압축 + agent_docs 도메인맵 추가 | 1일 |
-| 3 | **Navigator (todolist)** | HTML + Vanilla JS + Firebase | GitHub Pages | chore: ROADMAP.md 제거 (archive/roadmaps/로 이관 완료) | 0일 |
-| 4 | **Baby Care** | Next.js 16 + TS + Firebase | Vercel | refactor: CLAUDE.md 압축 + agent_docs 도메인맵 추가 | 1일 |
-| 5 | **Kimchi Premium** | React + Vite + WebSocket | 로컬 | refactor: CLAUDE.md 압축 + agent_docs 도메인맵 추가 | 1일 |
-| 6 | **Telegram Event Bot** | Python + Flask + Supabase | 로컬 | refactor: CLAUDE.md 압축 + agent_docs 도메인맵 추가 | 1일 |
-| 7 | **Portfolio** | Vite + React + TS + Tailwind + Framer | GitHub Pages | refactor: 포트폴리오 전면 리디자인 — 다크 글로우→라이트 미니멀 톤 | 1일 |
-| 8 | **Text RPG (심연)** | Vite + Vanilla JS | 로컬 | refactor: CLAUDE.md 압축 + agent_docs 도메인맵 추가 | 1일 |
-| 9 | **Saitama Training** | React + TS + Firebase + zustand | Vercel | refactor: CLAUDE.md 압축 + agent_docs 도메인맵 추가 | 1일 |
-| 10 | **Make Money** | Node.js + Express + SQLite + Claude AI | 로컬 | feat: CEO 모드 수동 오버라이드 API 추가 | 0일 |
-| 11 | **OpenClaw (코딩봇)** | Python + telegram-bot + Claude Agent SDK | WSL pm2 | feat: Phase 1 UX — 에러 해석 보고 + 일일 보고서 + Rich Format | 0일 |
-| 12 | **Mission Control** | Next.js 16 + TS + Tailwind v4 | Vercel | fix: API 응답 방어 코드 강화 — y.map is not a function 크래시 해결 | 0일 |
+| 1 | **X Article Editor** | Next.js 16 + TS + Supabase + TipTap | Vercel | chore: 불필요 bat 파일 삭제 + .gitignore에 .mcp.json 추가 | 1일 |
+| 2 | **자산관리 (Web3 가계부)** | Vite + Vanilla JS + Supabase + Chart.js | Vercel | chore: vite 포트 5140으로 변경 (워크스페이스 포트 규칙 동기화) | 2일 |
+| 3 | **Navigator (todolist)** | HTML + Vanilla JS + Firebase | GitHub Pages | chore: .gitignore에 .mcp.json 추가 | 1일 |
+| 4 | **Baby Care** | Next.js 16 + TS + Firebase | Vercel | chore: .gitignore에 .mcp.json 추가 | 1일 |
+| 5 | **Kimchi Premium** | React + Vite + WebSocket | 로컬 | chore: .gitignore에 .mcp.json 추가 | 1일 |
+| 6 | **Telegram Event Bot** | Python + Flask + Supabase | 로컬 | chore: .gitignore에 .mcp.json 추가 | 1일 |
+| 7 | **Portfolio** | Vite + React + TS + Tailwind + Framer | GitHub Pages | chore: vite 포트 5110 명시 (워크스페이스 포트 규칙 동기화) | 2일 |
+| 8 | **Text RPG (심연)** | Vite + Vanilla JS | 로컬 | chore: vite 포트 5120으로 변경 (워크스페이스 포트 규칙 동기화) | 2일 |
+| 9 | **Saitama Training** | React + TS + Firebase + zustand | Vercel | chore: .gitignore에 .mcp.json 추가 | 1일 |
+| 10 | **Make Money** | Node.js + Express + SQLite + Claude AI | 로컬 | fix: 대시보드 3건 버그 수정 — 종료 포지션 필터링, PnL 보완, 날짜 표시 | 0일 |
+| 11 | **OpenClaw (코딩봇)** | Python + telegram-bot + Claude Agent SDK | WSL pm2 | docs: OpenClaw git 정책 + WatchBot 은퇴 기록 추가 | 1일 |
+| 12 | **Mission Control** | Next.js 16 + TS + Tailwind v4 | Vercel | feat: Overview에 Quick Launch 패널 추가 | 0일 |
 
 ---
 
@@ -59,18 +59,18 @@
 
 | 프로젝트 | 커밋 수 | 최신 변경 |
 |----------|---------|----------|
-| **X Article Editor** | 14건 | refactor: CLAUDE.md 압축 + agent_docs 도메인맵 추가 |
-| **자산관리 (Web3 가계부)** | 11건 | refactor: CLAUDE.md 압축 + agent_docs 도메인맵 추가 |
-| **Navigator (todolist)** | 11건 | chore: ROADMAP.md 제거 (archive/roadmaps/로 이관 완료) |
-| **Baby Care** | 15건 | refactor: CLAUDE.md 압축 + agent_docs 도메인맵 추가 |
-| **Kimchi Premium** | 14건 | refactor: CLAUDE.md 압축 + agent_docs 도메인맵 추가 |
-| **Telegram Event Bot** | 13건 | refactor: CLAUDE.md 압축 + agent_docs 도메인맵 추가 |
-| **Portfolio** | 11건 | refactor: 포트폴리오 전면 리디자인 — 다크 글로우→라이트 미니멀 톤 |
-| **Text RPG (심연)** | 10건 | refactor: CLAUDE.md 압축 + agent_docs 도메인맵 추가 |
-| **Saitama Training** | 17건 | refactor: CLAUDE.md 압축 + agent_docs 도메인맵 추가 |
-| **Make Money** | 100건 | feat: CEO 모드 수동 오버라이드 API 추가 |
-| **OpenClaw (코딩봇)** | 39건 | feat: Phase 1 UX — 에러 해석 보고 + 일일 보고서 + Rich Format |
-| **Mission Control** | 28건 | fix: API 응답 방어 코드 강화 — y.map is not a function 크래시 해결 |
+| **X Article Editor** | 11건 | chore: 불필요 bat 파일 삭제 + .gitignore에 .mcp.json 추가 |
+| **자산관리 (Web3 가계부)** | 10건 | chore: vite 포트 5140으로 변경 (워크스페이스 포트 규칙 동기화) |
+| **Navigator (todolist)** | 11건 | chore: .gitignore에 .mcp.json 추가 |
+| **Baby Care** | 12건 | chore: .gitignore에 .mcp.json 추가 |
+| **Kimchi Premium** | 11건 | chore: .gitignore에 .mcp.json 추가 |
+| **Telegram Event Bot** | 11건 | chore: .gitignore에 .mcp.json 추가 |
+| **Portfolio** | 11건 | chore: vite 포트 5110 명시 (워크스페이스 포트 규칙 동기화) |
+| **Text RPG (심연)** | 9건 | chore: vite 포트 5120으로 변경 (워크스페이스 포트 규칙 동기화) |
+| **Saitama Training** | 13건 | chore: .gitignore에 .mcp.json 추가 |
+| **Make Money** | 106건 | fix: 대시보드 3건 버그 수정 — 종료 포지션 필터링, PnL 보완, 날짜 표시 |
+| **OpenClaw (코딩봇)** | 40건 | docs: OpenClaw git 정책 + WatchBot 은퇴 기록 추가 |
+| **Mission Control** | 30건 | feat: Overview에 Quick Launch 패널 추가 |
 
 ---
 
@@ -78,7 +78,7 @@
 
 | TASK-ID | 담당 | 상태 | 대상 | 비고 |
 |---------|------|------|------|------|
-| TRADINGLAB-005 | codex | in_progress | AGENT_TASK_BOARD.md, projects/coin-test-project/tradinglab/dashboard.py, projects/coin-test-project/README.md | 대시보드 용어 한글화 진행 |
+| - | - | - | - | - |
 
 
 ---
@@ -200,10 +200,12 @@
 
 ### 6-2. Make Money 엔진 개선 (활발)
 
-- Session 4 (최신): sync-recovery 무한 임포트 루프 수정, PnL 하드코딩 0 → 실제 계산, paper 모드 제거, safety 완화, trade journal JSONL 추가, 체크포인트 4h, 대시보드 수정
-- DB 마이그레이션 완료: 16건 PnL 보정 + 55건 중복 삭제 (PnL $-7.33 → $-0.04)
-- 봇 현재 상태: LIVE, USDC $24.70, 56거래 (승률 33.9%), AI 예산 $44.93 잔여
-- Codex review 대기 중: 엔진 시그널 최적화(MM-CODEX-017), 대시보드 WebSocket(MM-CODEX-016), 대시보드 상태 가시성(MM-CODEX-018)
+- Session 3 (2026-02-23): 대시보드 온체인 포지션 미표시 수정, 전략 선택 turbo 고정 버그 수정
+- Session 5 (2026-02-23): 종료 온체인 포지션 OPEN→클레임 분리, trades PnL NULL 보완, 온체인 날짜 표시
+- CX 튜닝 반영: qualityFloor + 스마트머니 레짐 + tuning_pack_id 트래킹 + A/B 리포트 API
+- Codex MM-SYNC-RECON-03: SYNC_PHANTOM 즉시 0종료 제거 → 유예/재검증 구조 + 온체인 대조 감사 API
+- Codex MM-PHANTOM-BACKFILL-04: 기존 SYNC_PHANTOM 20건 전수 백필 대조 완료
+- 봇 현재 상태: LIVE ($26.08 잔고, 18847 사이클), Codex 변경은 서버 재시작 후 반영
 
 ### 6-3. 주요 아키텍처 결정 기록 (ADR)
 
@@ -215,6 +217,12 @@
 | 스킬 시스템 | 매니페스트만 주입 + 온디맨드 Read | 전체 내용 시스템 프롬프트 포함 | 토큰 절약, 컨텍스트 윈도우 효율 |
 | 봇 실행 환경 | 메인 PC WSL (PM2) | Mac Mini 격리 / 클라우드 VM | 추가 비용 0, 기존 인프라 재사용. 패턴 이식으로 공격 표면이 작아져 격리 긴급성 낮음 |
 | Codex 호출 방식 | `codex exec` CLI 직접 호출 | SDK 통합 | OpenAI Codex CLI가 유일한 공식 인터페이스 |
+
+---
+
+---
+
+---
 
 ---
 
@@ -268,41 +276,26 @@
 
 ## §8 최근 일기
 
-### 2026-02-21 (6 세션)
+### 2026-02-24 (1 세션)
 
-1. 로드맵 잔여 작업 일괄 처리 + OpenClaw Phase 1 완료 + Navigator per-habit 트래킹
-2. Codex 산출물 2건 검수 + 커밋 + push + 세션 마무리
-3. Mission Control Vercel 배포 클라이언트 사이드 크래시 수정
-4. Make Money Bot 전면 수정 — sync 무한루프 + PnL 보정 + 연속운영 + 저널 + 대시보드
-5. Mission Control 대시보드 리뉴얼 — 8탭→5탭 축소 + OpenClaw→Watch Bot 리브랜딩
-6. Mission Control 런타임 크래시 수정 (y.map is not a function)
+1. Mission Control에 Quick Launch 패널 추가
 
-### 2026-02-20 (14 세션)
+### 2026-02-23 (5 세션)
 
-1. AI 할루시네이션 방지 정직성 원칙 추가
-2. Make Money 봇 안정성 + 수익성 종합 개선
-3. Make Money 봇 시그널 가뭄 분석 + 전략 개선
-4. OpenClaw 봇 Codex 프롬프트 4건 실행 + 검수 통합
-5. OpenClaw 현황 진단 + 로드맵 작성, Codex 전프로젝트 변경사항 검수/커밋/push
-6. Make Money 봇 라이브 복구 + 근본 안정성 수정 6건
-7. HANDOFF-WEB 속도 문제 근본 해결 (11분→3초)
-8. Make Money 대시보드 실시간 동기화 개선 + 규칙 enforcement 구조 개선
-9. 포트폴리오 프로젝트 대규모 업데이트 (6→11개)
-10. CLAUDE.md + AGENTS.md 규칙 문서 대규모 압축 (~2700→~290줄/세션)
-11. 규칙 문서 압축 검증 + OpenClaw Make Money 헬스 모니터 코드 검수/커밋
-12. Make Money 서버 사망 원인 분석 + WatchBot 자동 복구 배포 + 서버 재시작
-13. 로드맵 체계 전면 정비 — Mission Control을 Source of Truth로
-14. 로드맵 전체 할 일 정리 + OpenClaw 멀티봇/페르소나 확장 검토
+1. claude-mem MCP 연결 오류 진단 + Python 3.13 설치 + 작업환경 전체 점검
+2. 모바일 SSH 접속 불가 문제 진단 및 해결
+3. Make Money 대시보드 포지션 미표시 + 전략 선택 고정 버그 수정
+4. awesome-claude-code 리서치 + permissions 대청소 + session-end 스킬 개선
+5. Make Money 대시보드 3건 버그 수정
 
-### 2026-02-19 (7 세션)
+### 2026-02-22 (6 세션)
 
-1. 경로 마이그레이션 + 외부 도구 평가
-2. HANDOFF-WEB 생성 + KM 시스템 설계
-3. 자동 분배 규칙 + 도메인 맵 + 글로벌 설정 버전관리
-4. 세션 인프라 전면 수정 + 워크플로우 통합
-5. 텔레그램 개발 관제 시스템 구현
-6. Make Money 봇 라이브 시작
-7. SSH/WSL 작업환경 진단 + 문서 정확성 수정 + 세션 정리
+1. 터미널 세션 정리 안내 + text-rpg Codex 산출물 검수 + 커밋 + push
+2. OpenClaw 좀비 VM 진단 + 데이터 백업 + 정리 시도
+3. 시스템 점검 + 환경 정리 + Make Money 봇 상태 확인
+4. Make Money 대시보드 "살아있는 느낌" 개선 + pm2 운영 환경 정비
+5. Make Money 대시보드 전략 변경 버그 수정 + 포지션 진입 불능 원인 분석/해결
+6. 이전 세션 "전체 개발 프로세스 정비" 후속 검증 및 수정
 
 
 
@@ -314,7 +307,7 @@
 |---------|----------|
 | X Article Editor | @google/generative-ai, @supabase/ssr, @supabase/supabase-js, @tiptap/extension-image, @tiptap/extension-placeholder, @tiptap/extension-strike, @tiptap/extension-underline, @tiptap/pm, @tiptap/react, @tiptap/starter-kit |
 | 자산관리 (Web3 가계부) | @supabase/supabase-js, chart.js |
-| Navigator (todolist) | firebase, playwright |
+| Navigator (todolist) | firebase, playwright, serve |
 | Baby Care | date-fns, firebase, framer-motion, nanoid, next, react, react-dom, recharts |
 | Kimchi Premium | python-telegram-bot, aiohttp, PyJWT, python-dotenv, supabase |
 | Telegram Event Bot | python-telegram-bot, flask, python-dotenv, flask-limiter, supabase, pytest |
@@ -342,6 +335,7 @@
 | ERR-007 | sync-recovery 무한 임포트 루프 | `_syncBlacklist` Set에 EXPIRED_WORTHLESS/REDEEMABLE token_id 로드 + OPEN/CLOSED 24h 내 동일 token_id 체크 |
 | ERR-008 | EXPIRED_WORTHLESS PnL 하드코딩 0 | `pnl = exitValue - entryCost` 계산 후 전달 + fix-expired-pnl.js로 기존 데이터 소급 보정 |
 | ERR-009 | better-sqlite3 FK constraint DELETE 실패 | `PRAGMA foreign_keys = OFF` + DELETE FROM orders WHERE trade_id = ? 선행 실행 |
+| ERR-011 | Vite JSX 변환 안 됨 (NTFS junction + fs.strict 충돌) | vite.config.js에 `resolve: { preserveSymlinks: true }` + `server: { fs: { strict: false } }` 추가 |
 
 
 ---
@@ -402,4 +396,4 @@ TASK-ID:
 
 ---
 
-*Generated by handoff-generate.py on 2026-02-21 20:21 KST*
+*Generated by handoff-generate.py on 2026-02-24 11:57 KST*
