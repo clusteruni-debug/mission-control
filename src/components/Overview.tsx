@@ -24,6 +24,7 @@ import {
   Target,
 } from 'lucide-react';
 import { PROJECTS, PRIORITY_LABELS, PRIORITY_COLORS } from '@/lib/constants';
+import { QuickLaunch } from './QuickLaunch';
 import type { ProjectPriority } from '@/types';
 
 // --- 인터페이스 ---
@@ -514,6 +515,9 @@ export function Overview({ snapshots, onNavigate }: OverviewProps) {
           </button>
         ))}
       </div>
+
+      {/* Quick Launch */}
+      <QuickLaunch />
 
       {/* 추세 차트 */}
       <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
