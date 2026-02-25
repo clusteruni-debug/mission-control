@@ -19,12 +19,22 @@ src/
 ├── app/
 │   ├── page.tsx                # Dashboard 진입점
 │   ├── api/                    # scan, feed, bot-status, task-board, make-money, telegram-bot, openclaw-command, snapshot, trades-sync
-│   └── project/[folder]/       # 프로젝트 상세
-├── components/                 # Dashboard, Overview, ProjectCard, StatsBar, MakeMoneyWidget, EventWidget, OpenClawControl, TrendChart, CommandPalette, etc.
-├── hooks/                      # useKeyboardShortcuts, useNotifications
-├── lib/                        # constants, github, supabase, supabase-admin, utils
-└── types/                      # index.ts, status.ts (SSOT)
+│   └── project/[folder]/       # 프로젝트 상세 (orchestrator → project-detail/)
+├── components/
+│   ├── Dashboard.tsx            # 메인 오케스트레이터 → dashboard/
+│   ├── dashboard/               # DashboardHeader, TabNavigation, TabContent, types
+│   ├── Overview.tsx             # 오버뷰 오케스트레이터 → overview/
+│   ├── overview/                # SummaryCards, TrendChartSection, TimelineSection, RoadmapSection, types, utils
+│   ├── MakeMoneyWidget.tsx      # Make Money 오케스트레이터 → make-money/
+│   ├── make-money/              # PortfolioSummary, EngineStatusList, RecentTrades, types, format-utils
+│   ├── project-detail/          # SummaryCard, Section, ProjectHeader, ConnectionsPanel, CommitHistory, ChangelogSection
+│   └── (기타)                   # ProjectCard, StatsBar, EventWidget, BotStatus, TrendChart, CommandPalette, etc.
+├── hooks/                       # useKeyboardShortcuts, useNotifications
+├── lib/                         # constants, github, supabase, supabase-admin, utils
+└── types/                       # index.ts, status.ts (SSOT)
 ```
+
+**주의**: 서브디렉토리 barrel export (index.ts)는 circular import 유발 가능. 오케스트레이터에서는 직접 파일 경로 import 사용 (예: `./overview/SummaryCards` not `./overview`).
 
 ## 환경변수 (.env.local)
 SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, COLLECTOR_SECRET, GITHUB_TOKEN
