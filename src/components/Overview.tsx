@@ -5,7 +5,6 @@ import type { ServiceStatus } from '@/types/status';
 import {
   FolderGit2,
   DollarSign,
-  Bot,
   CalendarClock,
 } from 'lucide-react';
 import { QuickLaunch } from './QuickLaunch';
@@ -22,7 +21,6 @@ import {
 import type {
   OverviewProps,
   MakeMoneyOverview,
-  WatchBotOverview,
   EventOverview,
   TimelineItem,
   RangeKey,
@@ -33,10 +31,8 @@ import type {
 export function Overview({ snapshots, onNavigate }: OverviewProps) {
   // 요약 카드 데이터
   const [makeMoney, setMakeMoney] = useState<MakeMoneyOverview | null>(null);
-  const [watchBot, setWatchBot] = useState<WatchBotOverview | null>(null);
   const [events, setEvents] = useState<EventOverview | null>(null);
   const [mmStatus, setMmStatus] = useState<ServiceStatus>('unknown');
-  const [watchBotStatus, setWatchBotStatus] = useState<ServiceStatus>('unknown');
   const [eventStatus, setEventStatus] = useState<ServiceStatus>('unknown');
 
   // 통합 타임라인
@@ -95,22 +91,6 @@ export function Overview({ snapshots, onNavigate }: OverviewProps) {
         setMmStatus('offline');
       }
     });
-
-    // Watch Bot
-    fetch('/api/bot-status')
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.status === 'online') {
-          setWatchBot({
-            status: 'online',
-            success_rate: data.success_rate ?? 0,
-          });
-          setWatchBotStatus('online');
-        } else {
-          setWatchBotStatus('offline');
-        }
-      })
-      .catch(() => setWatchBotStatus('offline'));
 
     // Events
     fetch('/api/telegram-bot?path=stats')
@@ -206,23 +186,6 @@ export function Overview({ snapshots, onNavigate }: OverviewProps) {
                     ? 'text-emerald-500'
                     : undefined,
               },
-            ]
-          : [],
-    },
-    {
-      title: 'Watch Bot',
-      tab: 'monitoring',
-      icon: Bot,
-      status: watchBotStatus,
-      rows:
-        watchBotStatus === 'online' && watchBot
-          ? [
-              { label: '상태', value: 'Online', color: 'text-emerald-500' },
-              {
-                label: '성공률',
-                value: `${Math.round(watchBot.success_rate)}%`,
-              },
-              { label: '현재', value: 'idle' },
             ]
           : [],
     },

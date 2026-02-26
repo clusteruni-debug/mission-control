@@ -11,7 +11,6 @@ export {
 export type {
   OverviewProps,
   MakeMoneyOverview,
-  WatchBotOverview,
   EventOverview,
   TimelineItem,
   RangeKey,

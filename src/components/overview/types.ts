@@ -12,11 +12,6 @@ export interface MakeMoneyOverview {
   agent: string;
 }
 
-export interface WatchBotOverview {
-  status: string;
-  success_rate: number;
-}
-
 export interface EventOverview {
   deadlineSoon: number;
   participationRate: number;

@@ -8,7 +8,6 @@ import { ConnectionMap } from '../ConnectionMap';
 import { TaskBoard } from '../TaskBoard';
 import { MakeMoneyWidget } from '../MakeMoneyWidget';
 import { EventWidget } from '../EventWidget';
-import { WatchBotStatusCard } from '../BotStatus';
 import { Overview } from '../Overview';
 import type { ProjectSnapshot } from '@/types';
 import type { TabView } from './types';
@@ -16,7 +15,6 @@ import type { TabView } from './types';
 interface TabContentProps {
   activeTab: TabView;
   loading: boolean;
-  refreshKey: number;
   snapshots: ProjectSnapshot[];
   sorted: ProjectSnapshot[];
   onNavigate: (tab: string) => void;
@@ -25,7 +23,6 @@ interface TabContentProps {
 export function TabContent({
   activeTab,
   loading,
-  refreshKey,
   snapshots,
   sorted,
   onNavigate,
@@ -43,7 +40,6 @@ export function TabContent({
     <>
       {activeTab === 'overview' && (
         <Overview
-          key={refreshKey}
           snapshots={snapshots}
           onNavigate={onNavigate}
         />
@@ -61,19 +57,16 @@ export function TabContent({
       )}
 
       {activeTab === 'monitoring' && (
-        <div key={refreshKey} className="space-y-4">
+        <div className="space-y-4">
           <div className="grid gap-4 lg:grid-cols-2">
             <MakeMoneyWidget />
             <EventWidget />
           </div>
-          <div className="grid gap-4 lg:grid-cols-2">
-            <WatchBotStatusCard />
-            <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
-              <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
-                프로젝트 간 연동 현황
-              </h2>
-              <ConnectionMap />
-            </div>
+          <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
+            <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+              프로젝트 간 연동 현황
+            </h2>
+            <ConnectionMap />
           </div>
         </div>
       )}

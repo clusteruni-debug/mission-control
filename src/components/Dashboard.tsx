@@ -20,9 +20,9 @@ export function Dashboard() {
   const [filter, setFilter] = useState<FilterCategory>('all');
   const [activeTab, setActiveTab] = useState<TabView>('overview');
   const [paletteOpen, setPaletteOpen] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0);
   const [countdown, setCountdown] = useState(AUTO_REFRESH_MS / 1000);
   const countdownRef = useRef(AUTO_REFRESH_MS / 1000);
+  const hasLoadedRef = useRef(false);
 
   // --- Notifications ---
 
@@ -40,7 +40,7 @@ export function Dashboard() {
   // --- Data fetching ---
 
   const fetchData = useCallback(async () => {
-    setLoading(true);
+    if (!hasLoadedRef.current) setLoading(true);
     try {
       const res = await fetch('/api/scan');
       if (!res.ok) {
@@ -50,6 +50,7 @@ export function Dashboard() {
       const data: ScanResult = await res.json();
       setSnapshots(Array.isArray(data?.snapshots) ? data.snapshots : []);
       setScannedAt(data?.scannedAt ?? null);
+      hasLoadedRef.current = true;
     } catch (err) {
       console.error('스캔 데이터 로딩 실패:', err);
     } finally {
@@ -109,7 +110,6 @@ export function Dashboard() {
       setCountdown(countdownRef.current);
       if (countdownRef.current <= 0) {
         fetchData();
-        setRefreshKey((k) => k + 1);
         countdownRef.current = AUTO_REFRESH_MS / 1000;
         setCountdown(AUTO_REFRESH_MS / 1000);
       }
@@ -159,7 +159,7 @@ export function Dashboard() {
         onRefresh={fetchData}
       />
 
-      {!loading && <StatsBar key={refreshKey} snapshots={snapshots} />}
+      {!loading && <StatsBar snapshots={snapshots} />}
 
       <TabNavigation
         activeTab={activeTab}
@@ -171,7 +171,6 @@ export function Dashboard() {
       <TabContent
         activeTab={activeTab}
         loading={loading}
-        refreshKey={refreshKey}
         snapshots={snapshots}
         sorted={sorted}
         onNavigate={(tab) => setActiveTab(tab as TabView)}

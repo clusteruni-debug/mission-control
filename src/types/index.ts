@@ -118,3 +118,16 @@ export interface TaskBoardItem {
   status: string;
   notes: string;
 }
+
+// --- User Tasks (Supabase mc_tasks) ---
+
+export interface UserTask {
+  id: number;
+  title: string;
+  description: string;
+  status: 'todo' | 'in_progress' | 'done';
+  priority: 'high' | 'medium' | 'low';
+  project: string;
+  created_at: string;
+  updated_at: string;
+}

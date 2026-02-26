@@ -15,7 +15,7 @@ export const PROJECTS: ProjectConfig[] = [
     platform: 'windows',
     runCmd: 'npx serve -p 5000',
     port: 5000,
-    connections: ['telegram-event-bot', 'web3-budget-app', 'article-editor'],
+    connections: ['telegram-event-bot', '자산관리', 'x-article-editor'],
     phase: '기능 확장 완료',
     completionPct: 92,
     nextTasks: ['습관 통계 리포트', '습관 알림'],

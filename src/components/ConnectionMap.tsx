@@ -26,7 +26,6 @@ interface HealthSnapshot {
 const SERVICE_BY_FOLDER: Record<string, string> = {
   'make-money-project': 'make-money',
   'telegram-event-bot': 'telegram-bot',
-  'claude-code-bot': 'watchbot',
 };
 
 function statusWeight(status: ServiceStatus): number {
@@ -57,7 +56,6 @@ export function ConnectionMap() {
       const requests = await Promise.allSettled([
         fetch('/api/make-money?path=health').then((r) => r.json()),
         fetch('/api/telegram-bot?path=health').then((r) => r.json()),
-        fetch('/api/bot-status').then((r) => r.json()),
       ]);
 
       const toSnapshot = (payload: unknown): HealthSnapshot => {
@@ -108,18 +106,11 @@ export function ConnectionMap() {
               fetchedAt: new Date().toISOString(),
               error: 'Telegram Bot 연결 실패',
             },
-        watchbot: requests[2].status === 'fulfilled'
-          ? toSnapshot(requests[2].value)
-          : {
-              status: 'offline',
-              fetchedAt: new Date().toISOString(),
-              error: 'Watch Bot 연결 실패',
-            },
       });
     };
 
     fetchHealth();
-    const interval = setInterval(fetchHealth, 30_000);
+    const interval = setInterval(fetchHealth, 60_000);
     return () => clearInterval(interval);
   }, []);
 
@@ -130,7 +121,7 @@ export function ConnectionMap() {
     for (const project of PROJECTS) {
       if (!project.connections) continue;
       for (const targetFolder of project.connections) {
-        const key = [project.folder, targetFolder].sort().join('↔');
+        const key = [project.folder, targetFolder].sort().join('\u2194');
         if (seen.has(key)) continue;
         seen.add(key);
 
