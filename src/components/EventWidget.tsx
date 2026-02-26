@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { ProxyResponse, ServiceStatus } from '@/types/status';
 import { getStatusColor } from '@/types/status';
 import { cn } from '@/lib/utils';
-import { CalendarClock, Loader2, RefreshCw, AlertTriangle } from 'lucide-react';
+import { CalendarClock, Loader2, RefreshCw, AlertTriangle, Bot, Globe } from 'lucide-react';
 
 interface TelegramHealth {
   status: string;
@@ -24,6 +24,11 @@ interface TelegramAnalyzedItem {
   deadline?: string;
   analysis?: unknown;
   participated?: boolean;
+}
+
+interface TelegramBotPolling {
+  ok?: boolean;
+  result?: { username?: string };
 }
 
 function statusBadgeClass(status: ServiceStatus): string {
@@ -49,41 +54,33 @@ export function EventWidget() {
   const [statsRes, setStatsRes] = useState<ProxyResponse<TelegramStats> | null>(null);
   const [healthRes, setHealthRes] = useState<ProxyResponse<TelegramHealth> | null>(null);
   const [analyzedRes, setAnalyzedRes] = useState<ProxyResponse<TelegramAnalyzedItem[]> | null>(null);
+  const [botPollingRes, setBotPollingRes] = useState<ProxyResponse<TelegramBotPolling> | null>(null);
   const [loading, setLoading] = useState(true);
 
   const fetchAll = async () => {
     setLoading(true);
     try {
-      const [stats, health, analyzed] = await Promise.all([
+      const [stats, health, analyzed, botPolling] = await Promise.all([
         fetch('/api/telegram-bot?path=stats').then((r) => r.json()),
         fetch('/api/telegram-bot?path=health').then((r) => r.json()),
         fetch('/api/telegram-bot?path=analyzed').then((r) => r.json()),
+        fetch('/api/telegram-bot?path=bot-polling').then((r) => r.json()),
       ]);
       setStatsRes(stats);
       setHealthRes(health);
       setAnalyzedRes(analyzed);
+      setBotPollingRes(botPolling);
     } catch {
-      const offlineStats: ProxyResponse<TelegramStats> = {
+      const offline: ProxyResponse<TelegramStats> = {
         data: null,
         status: 'offline',
         fetchedAt: new Date().toISOString(),
         error: 'Mission Control 프록시 연결 실패',
       };
-      const offlineHealth: ProxyResponse<TelegramHealth> = {
-        data: null,
-        status: 'offline',
-        fetchedAt: offlineStats.fetchedAt,
-        error: offlineStats.error,
-      };
-      const offlineAnalyzed: ProxyResponse<TelegramAnalyzedItem[]> = {
-        data: null,
-        status: 'offline',
-        fetchedAt: offlineStats.fetchedAt,
-        error: offlineStats.error,
-      };
-      setStatsRes(offlineStats);
-      setHealthRes(offlineHealth);
-      setAnalyzedRes(offlineAnalyzed);
+      setStatsRes(offline);
+      setHealthRes({ ...offline, data: null } as ProxyResponse<TelegramHealth>);
+      setAnalyzedRes({ ...offline, data: null } as ProxyResponse<TelegramAnalyzedItem[]>);
+      setBotPollingRes({ ...offline, data: null } as ProxyResponse<TelegramBotPolling>);
     } finally {
       setLoading(false);
     }
@@ -93,7 +90,7 @@ export function EventWidget() {
     fetchAll();
   }, []);
 
-  const overallStatus: ServiceStatus = useMemo(() => {
+  const webStatus: ServiceStatus = useMemo(() => {
     const statuses = [statsRes?.status, healthRes?.status, analyzedRes?.status].filter(Boolean) as ServiceStatus[];
     if (!statuses.length) return 'unknown';
     if (statuses.includes('offline')) return 'offline';
@@ -101,6 +98,17 @@ export function EventWidget() {
     if (statuses.every((s) => s === 'online')) return 'online';
     return 'unknown';
   }, [statsRes, healthRes, analyzedRes]);
+
+  const botStatus: ServiceStatus = botPollingRes?.status ?? 'unknown';
+
+  const overallStatus: ServiceStatus = useMemo(() => {
+    const statuses = [webStatus, botStatus];
+    if (statuses.includes('offline')) return 'offline';
+    if (statuses.includes('degraded')) return 'degraded';
+    if (statuses.every((s) => s === 'online')) return 'online';
+    if (statuses.includes('online')) return 'degraded';
+    return 'unknown';
+  }, [webStatus, botStatus]);
 
   const stats = statsRes?.data;
   const analyzed = Array.isArray(analyzedRes?.data) ? analyzedRes.data : [];
@@ -140,9 +148,6 @@ export function EventWidget() {
         <div className="flex items-center gap-2">
           <CalendarClock className="h-5 w-5 text-gray-600 dark:text-gray-300" />
           <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Telegram 이벤트 봇</h2>
-          <span className={cn('inline-flex rounded-full px-2 py-0.5 text-xs font-medium', statusBadgeClass(overallStatus))}>
-            {overallStatus}
-          </span>
         </div>
         <button
           onClick={fetchAll}
@@ -150,6 +155,24 @@ export function EventWidget() {
         >
           <RefreshCw className="h-4 w-4" />
         </button>
+      </div>
+
+      {/* 서비스 상태 표시: Bot(WSL) + Web(Vercel) */}
+      <div className="mb-4 flex items-center gap-3">
+        <div className="flex items-center gap-1.5">
+          <Bot className="h-3.5 w-3.5 text-gray-500 dark:text-gray-400" />
+          <span className="text-xs text-gray-500 dark:text-gray-400">Bot</span>
+          <span className={cn('inline-flex rounded-full px-2 py-0.5 text-xs font-medium', statusBadgeClass(botStatus))}>
+            {botStatus}
+          </span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <Globe className="h-3.5 w-3.5 text-gray-500 dark:text-gray-400" />
+          <span className="text-xs text-gray-500 dark:text-gray-400">Web</span>
+          <span className={cn('inline-flex rounded-full px-2 py-0.5 text-xs font-medium', statusBadgeClass(webStatus))}>
+            {webStatus}
+          </span>
+        </div>
       </div>
 
       {!isOnline ? (
