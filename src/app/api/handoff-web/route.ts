@@ -1,16 +1,24 @@
 import { NextResponse } from 'next/server';
 import { scanAllProjects, fetchUnifiedFeed } from '@/lib/github';
-import { getTaskBoardItems } from '@/lib/task-board';
+import { getSupabaseAdmin } from '@/lib/supabase-admin';
 import { PROJECTS } from '@/lib/constants';
 import type { GitHubProjectSnapshot } from '@/lib/github';
-import type { TaskBoardItem } from '@/types';
 
 export const dynamic = 'force-dynamic';
+
+interface TaskRow {
+  id: number;
+  title: string;
+  status: string;
+  priority: string;
+  project: string;
+  description: string;
+}
 
 function buildMarkdown(
   snapshots: GitHubProjectSnapshot[],
   feed: { project: string; message: string; date: string }[],
-  tasks: TaskBoardItem[]
+  tasks: TaskRow[]
 ): string {
   const now = new Date().toISOString().replace('T', ' ').slice(0, 19);
   const lines: string[] = [];
@@ -80,19 +88,16 @@ function buildMarkdown(
   // §4 활성 작업
   lines.push('## §4 활성 작업');
   const activeTasks = tasks.filter(
-    (t) =>
-      t.status !== 'done' &&
-      t.status !== 'completed' &&
-      t.status !== 'cancelled'
+    (t) => t.status !== 'done'
   );
   if (activeTasks.length === 0) {
     lines.push('활성 작업 없음');
   } else {
-    lines.push('| TASK-ID | 담당 | 상태 | 대상 | 비고 |');
-    lines.push('|---------|------|------|------|------|');
+    lines.push('| 제목 | 상태 | 우선순위 | 프로젝트 |');
+    lines.push('|------|------|----------|----------|');
     for (const t of activeTasks) {
       lines.push(
-        `| ${t.taskId} | ${t.owner} | ${t.status} | ${t.project} | ${t.notes} |`
+        `| ${t.title} | ${t.status} | ${t.priority} | ${t.project || '—'} |`
       );
     }
   }
@@ -100,16 +105,7 @@ function buildMarkdown(
 
   // §5 블로커/리스크
   lines.push('## §5 블로커/리스크');
-  const blockers = tasks.filter(
-    (t) => t.status === 'blocked' || t.notes.toLowerCase().includes('block')
-  );
-  if (blockers.length === 0) {
-    lines.push('없음');
-  } else {
-    for (const b of blockers) {
-      lines.push(`- [${b.taskId}] ${b.project}: ${b.notes}`);
-    }
-  }
+  lines.push('없음');
   lines.push('');
 
   // §6 요청 사항
@@ -120,12 +116,25 @@ function buildMarkdown(
   return lines.join('\n');
 }
 
+async function fetchTasks(): Promise<TaskRow[]> {
+  try {
+    const supabase = getSupabaseAdmin();
+    const { data } = await supabase
+      .from('mc_tasks')
+      .select('id, title, status, priority, project, description')
+      .order('created_at', { ascending: false });
+    return data ?? [];
+  } catch {
+    return [];
+  }
+}
+
 export async function GET() {
   try {
     const [snapshots, feed, tasks] = await Promise.all([
       scanAllProjects(),
       fetchUnifiedFeed(50),
-      getTaskBoardItems(),
+      fetchTasks(),
     ]);
 
     const markdown = buildMarkdown(snapshots, feed, tasks);
