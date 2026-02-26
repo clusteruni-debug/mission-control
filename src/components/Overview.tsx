@@ -180,9 +180,11 @@ export function Overview({ snapshots, onNavigate }: OverviewProps) {
               },
               {
                 label: '에이전트',
-                value: makeMoney.agent === 'running' ? 'Running' : makeMoney.agent,
+                value: makeMoney.agent === 'running' ? 'Running'
+                  : makeMoney.agent === 'MONITORING' ? 'Monitoring'
+                  : makeMoney.agent,
                 color:
-                  makeMoney.agent === 'running'
+                  makeMoney.agent === 'running' || makeMoney.agent === 'MONITORING'
                     ? 'text-emerald-500'
                     : undefined,
               },
