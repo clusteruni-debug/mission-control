@@ -208,18 +208,21 @@ export function TaskBoard() {
           placeholder="새 작업 제목..."
           className="min-w-[200px] flex-1 rounded border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 outline-none focus:border-gray-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-200"
         />
-        <select
+        <input
+          type="text"
+          list="project-list"
           value={project}
           onChange={(e) => setProject(e.target.value)}
-          className="rounded border border-gray-300 bg-white px-2 py-1.5 text-sm text-gray-700 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-200"
-        >
-          <option value="">프로젝트 (선택)</option>
+          placeholder="프로젝트 (선택/입력)"
+          className="w-[160px] rounded border border-gray-300 bg-white px-2 py-1.5 text-sm text-gray-700 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-200"
+        />
+        <datalist id="project-list">
           {PROJECT_NAMES.map((p) => (
             <option key={p.folder} value={p.folder}>
               {p.name}
             </option>
           ))}
-        </select>
+        </datalist>
         <select
           value={priority}
           onChange={(e) => setPriority(e.target.value as Task['priority'])}
@@ -275,7 +278,7 @@ export function TaskBoard() {
               const isExpanded = expandedId === task.id;
               const projectName = PROJECT_NAMES.find(
                 (p) => p.folder === task.project
-              )?.name;
+              )?.name || task.project;
 
               return (
                 <div
