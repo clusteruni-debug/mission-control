@@ -18,7 +18,9 @@ interface ProjectCardProps {
 }
 
 export function ProjectCard({ snapshot }: ProjectCardProps) {
-  const { project, git, health, changelog } = snapshot;
+  const { project, git, health, changelog, livePhase, liveNextTasks } = snapshot;
+  const phase = livePhase || project.phase;
+  const nextTasks = liveNextTasks || project.nextTasks;
   const isNeglected = git.daysSinceCommit !== null && git.daysSinceCommit >= 7;
   const isStale = git.daysSinceCommit !== null && git.daysSinceCommit >= 14;
   const platformMeta =
@@ -64,12 +66,17 @@ export function ProjectCard({ snapshot }: ProjectCardProps) {
       </div>
 
       {/* Phase + 진행바 */}
-      {project.phase && (
+      {phase && (
         <div className="mb-3">
           <div className="mb-1.5 flex items-center gap-2">
             <span className="text-xs font-medium text-gray-600 dark:text-gray-300">
-              {project.phase}
+              {phase}
             </span>
+            {livePhase && (
+              <span className="rounded bg-emerald-100 px-1 py-0.5 text-[9px] text-emerald-600 dark:bg-emerald-900 dark:text-emerald-300">
+                LIVE
+              </span>
+            )}
             {project.priority && (
               <span className={cn('rounded px-1.5 py-0.5 text-[10px] font-medium', PRIORITY_COLORS[project.priority])}>
                 {PRIORITY_LABELS[project.priority]}
@@ -187,10 +194,10 @@ export function ProjectCard({ snapshot }: ProjectCardProps) {
       )}
 
       {/* Next Tasks */}
-      {project.nextTasks && project.nextTasks.length > 0 && (
+      {nextTasks && nextTasks.length > 0 && (
         <div className="mt-2">
           <ul className="space-y-0.5">
-            {project.nextTasks.map((task) => (
+            {nextTasks.map((task) => (
               <li key={task} className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
                 <span className="h-1 w-1 flex-shrink-0 rounded-full bg-gray-300 dark:bg-gray-600" />
                 {task}

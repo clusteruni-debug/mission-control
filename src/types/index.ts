@@ -56,10 +56,15 @@ export interface ProjectSnapshot {
   git: GitHubRepoInfo;
   health: ProjectHealth;
   changelog: ChangelogEntry | null;
+  /** CHANGELOG에서 자동 추출한 현재 단계 (없으면 project.phase 폴백) */
+  livePhase: string | null;
+  /** CLAUDE.md에서 자동 추출한 다음 할 일 (없으면 project.nextTasks 폴백) */
+  liveNextTasks: string[] | null;
 }
 
 export interface ProjectDetail extends ProjectSnapshot {
   fullChangelog: string | null;
+  fullClaude: string | null;
 }
 
 export interface ScanResult {

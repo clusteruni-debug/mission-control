@@ -39,10 +39,15 @@ export interface GitHubProjectSnapshot {
     hasChangelog: boolean;
   };
   changelog: { title: string; content: string } | null;
+  /** CHANGELOG에서 자동 추출한 현재 단계 */
+  livePhase: string | null;
+  /** CLAUDE.md에서 자동 추출한 다음 할 일 */
+  liveNextTasks: string[] | null;
 }
 
 export interface GitHubProjectDetail extends GitHubProjectSnapshot {
   fullChangelog: string | null;
+  fullClaude: string | null;
 }
 
 // --- API 호출 ---
@@ -156,67 +161,62 @@ function parseChangelogTitle(content: string): { title: string; content: string 
   return null;
 }
 
+/**
+ * CHANGELOG 최신 제목에서 phase를 추출한다.
+ * 예: "## [2026-03-01] 세션 15 — 5엔진 활성화 + 뉴스 튜닝"
+ *   → "5엔진 활성화 + 뉴스 튜닝"
+ */
+function extractPhaseFromChangelog(content: string): string | null {
+  const match = content.match(/^## (.+)/m);
+  if (!match) return null;
+  const title = match[1].trim();
+  // "— " 뒤의 설명 부분 추출 (없으면 날짜/세션 번호 제거 후 전체)
+  const dashIdx = title.indexOf('—');
+  if (dashIdx !== -1) {
+    return title.slice(dashIdx + 1).trim();
+  }
+  // 날짜 패턴 [YYYY-MM-DD] 제거
+  return title.replace(/\[?\d{4}-\d{2}-\d{2}\]?\s*/g, '').trim() || null;
+}
+
+/**
+ * CLAUDE.md에서 다음 할 일(nextTasks)을 추출한다.
+ * 패턴: "## 다음", "## TODO", "## Next", "## 로드맵" 섹션의 - 항목
+ */
+function extractNextTasksFromClaude(content: string): string[] | null {
+  // 다양한 섹션 헤더 매칭
+  const sectionMatch = content.match(
+    /^##\s+(?:다음|TODO|Next|로드맵|다음 할 일|Roadmap|할 일)\s*\n([\s\S]*?)(?=\n## |\n*$)/mi
+  );
+  if (!sectionMatch) return null;
+
+  const lines = sectionMatch[1].split('\n');
+  const tasks: string[] = [];
+  for (const line of lines) {
+    const taskMatch = line.match(/^\s*[-*]\s+(.+)/);
+    if (taskMatch && tasks.length < 3) {
+      // 체크박스 마크다운 제거: [ ] 또는 [x]
+      const cleaned = taskMatch[1].replace(/^\[[ x]\]\s*/i, '').trim();
+      if (cleaned) tasks.push(cleaned);
+    }
+  }
+  return tasks.length > 0 ? tasks : null;
+}
+
 // --- 메인 스캔 함수 ---
 
 export async function scanProject(
   project: ProjectConfig
 ): Promise<GitHubProjectSnapshot> {
-  const [commits, weekCount, repoInfo, hasPackageJson, hasClaude, hasChangelog] =
+  // fileExists 대신 fetchFileContent로 한번에 가져와서 API 호출 절감
+  const [commits, weekCount, repoInfo, hasPackageJson, changelogContent, claudeContent] =
     await Promise.all([
       fetchCommits(project.repo, 5),
       fetchWeekCommitCount(project.repo),
       fetchRepoInfo(project.repo),
       fileExists(project.repo, 'package.json'),
-      fileExists(project.repo, 'CLAUDE.md'),
-      fileExists(project.repo, 'CHANGELOG.md'),
-    ]);
-
-  const lastCommit = commits[0] ?? null;
-  let daysSinceCommit: number | null = null;
-  if (lastCommit) {
-    const diff = Date.now() - new Date(lastCommit.date).getTime();
-    daysSinceCommit = Math.floor(diff / (1000 * 60 * 60 * 24));
-  }
-
-  // CHANGELOG 파싱 (존재하면)
-  let changelog: { title: string; content: string } | null = null;
-  if (hasChangelog) {
-    const content = await fetchFileContent(project.repo, 'CHANGELOG.md');
-    if (content) {
-      changelog = parseChangelogTitle(content);
-    }
-  }
-
-  return {
-    project,
-    git: {
-      lastCommitDate: lastCommit?.date ?? null,
-      lastCommitMessage: lastCommit?.message ?? null,
-      commitCountWeek: weekCount,
-      recentCommits: commits,
-      daysSinceCommit,
-      defaultBranch: repoInfo?.defaultBranch ?? 'main',
-    },
-    health: {
-      hasPackageJson,
-      hasClaude,
-      hasChangelog,
-    },
-    changelog,
-  };
-}
-
-export async function scanProjectDetail(
-  project: ProjectConfig
-): Promise<GitHubProjectDetail> {
-  const [commits, weekCount, repoInfo, hasPackageJson, hasClaude, changelogContent] =
-    await Promise.all([
-      fetchCommits(project.repo, 20),
-      fetchWeekCommitCount(project.repo),
-      fetchRepoInfo(project.repo),
-      fileExists(project.repo, 'package.json'),
-      fileExists(project.repo, 'CLAUDE.md'),
       fetchFileContent(project.repo, 'CHANGELOG.md'),
+      fetchFileContent(project.repo, 'CLAUDE.md'),
     ]);
 
   const lastCommit = commits[0] ?? null;
@@ -228,6 +228,12 @@ export async function scanProjectDetail(
 
   const changelog = changelogContent
     ? parseChangelogTitle(changelogContent)
+    : null;
+  const livePhase = changelogContent
+    ? extractPhaseFromChangelog(changelogContent)
+    : null;
+  const liveNextTasks = claudeContent
+    ? extractNextTasksFromClaude(claudeContent)
     : null;
 
   return {
@@ -242,11 +248,65 @@ export async function scanProjectDetail(
     },
     health: {
       hasPackageJson,
-      hasClaude,
+      hasClaude: claudeContent !== null,
       hasChangelog: changelogContent !== null,
     },
     changelog,
+    livePhase,
+    liveNextTasks,
+  };
+}
+
+export async function scanProjectDetail(
+  project: ProjectConfig
+): Promise<GitHubProjectDetail> {
+  const [commits, weekCount, repoInfo, hasPackageJson, changelogContent, claudeContent] =
+    await Promise.all([
+      fetchCommits(project.repo, 20),
+      fetchWeekCommitCount(project.repo),
+      fetchRepoInfo(project.repo),
+      fileExists(project.repo, 'package.json'),
+      fetchFileContent(project.repo, 'CHANGELOG.md'),
+      fetchFileContent(project.repo, 'CLAUDE.md'),
+    ]);
+
+  const lastCommit = commits[0] ?? null;
+  let daysSinceCommit: number | null = null;
+  if (lastCommit) {
+    const diff = Date.now() - new Date(lastCommit.date).getTime();
+    daysSinceCommit = Math.floor(diff / (1000 * 60 * 60 * 24));
+  }
+
+  const changelog = changelogContent
+    ? parseChangelogTitle(changelogContent)
+    : null;
+  const livePhase = changelogContent
+    ? extractPhaseFromChangelog(changelogContent)
+    : null;
+  const liveNextTasks = claudeContent
+    ? extractNextTasksFromClaude(claudeContent)
+    : null;
+
+  return {
+    project,
+    git: {
+      lastCommitDate: lastCommit?.date ?? null,
+      lastCommitMessage: lastCommit?.message ?? null,
+      commitCountWeek: weekCount,
+      recentCommits: commits,
+      daysSinceCommit,
+      defaultBranch: repoInfo?.defaultBranch ?? 'main',
+    },
+    health: {
+      hasPackageJson,
+      hasClaude: claudeContent !== null,
+      hasChangelog: changelogContent !== null,
+    },
+    changelog,
+    livePhase,
+    liveNextTasks,
     fullChangelog: changelogContent,
+    fullClaude: claudeContent,
   };
 }
 

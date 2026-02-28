@@ -26,6 +26,8 @@ interface HealthSnapshot {
 const SERVICE_BY_FOLDER: Record<string, string> = {
   'make-money-project': 'make-money',
   'telegram-event-bot': 'telegram-bot',
+  'kimchi-premium': 'kimchi-premium',
+  'ai-hub': 'ai-hub',
 };
 
 function statusWeight(status: ServiceStatus): number {
@@ -56,6 +58,8 @@ export function ConnectionMap() {
       const requests = await Promise.allSettled([
         fetch('/api/make-money?path=health').then((r) => r.json()),
         fetch('/api/telegram-bot?path=health').then((r) => r.json()),
+        fetch('/api/kimchi-premium').then((r) => r.json()),
+        fetch('/api/ai-hub').then((r) => r.json()),
       ]);
 
       const toSnapshot = (payload: unknown): HealthSnapshot => {
@@ -91,21 +95,25 @@ export function ConnectionMap() {
         };
       };
 
+      const fallback = (label: string): HealthSnapshot => ({
+        status: 'offline',
+        fetchedAt: new Date().toISOString(),
+        error: `${label} 연결 실패`,
+      });
+
       setServiceHealth({
         'make-money': requests[0].status === 'fulfilled'
           ? toSnapshot(requests[0].value)
-          : {
-              status: 'offline',
-              fetchedAt: new Date().toISOString(),
-              error: 'Make Money 연결 실패',
-            },
+          : fallback('Make Money'),
         'telegram-bot': requests[1].status === 'fulfilled'
           ? toSnapshot(requests[1].value)
-          : {
-              status: 'offline',
-              fetchedAt: new Date().toISOString(),
-              error: 'Telegram Bot 연결 실패',
-            },
+          : fallback('Telegram Bot'),
+        'kimchi-premium': requests[2].status === 'fulfilled'
+          ? toSnapshot(requests[2].value)
+          : fallback('Kimchi Premium'),
+        'ai-hub': requests[3].status === 'fulfilled'
+          ? toSnapshot(requests[3].value)
+          : fallback('AI Hub'),
       });
     };
 
