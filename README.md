@@ -1,57 +1,57 @@
 # Mission Control
 
-워크스페이스 프로젝트 관제 대시보드
+Workspace project control dashboard
 
-## 기능
+## Features
 
-- **프로젝트 대시보드** — 11개 프로젝트 상태 한눈에 (방치 경고, 카테고리 필터)
-- **활동 피드** — 전체 프로젝트 커밋 통합 타임라인
-- **생산성 통계** — streak, 7일 히트맵, 프로젝트별 커밋 차트
-- **연동 현황** — 프로젝트 간 연동 상태 시각화
-- **상세 페이지** — 커밋 히스토리, CHANGELOG, GitHub 링크, 연동 프로젝트
+- **Project Dashboard** — 11 project statuses at a glance (neglect warnings, category filters)
+- **Activity Feed** — All-project commit unified timeline
+- **Productivity Stats** — Streak, 7-day heatmap, per-project commit chart
+- **Integration Status** — Inter-project integration status visualization
+- **Detail Page** — Commit history, CHANGELOG, GitHub link, connected projects
 
-## 스택
+## Stack
 
 Next.js 16 + TypeScript + Tailwind CSS + GitHub API + Supabase
 
-## 로컬 실행
+## Local Run
 
 ```bash
 npm install
-cp .env.example .env.local  # 환경변수 설정
+cp .env.example .env.local  # Set environment variables
 npm run dev
 ```
 
-## 환경변수
+## Environment Variables
 
-| 변수 | 필수 | 설명 |
-|------|------|------|
-| `NEXT_PUBLIC_SUPABASE_URL` | O | Supabase 프로젝트 URL |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | O | Supabase anon key |
-| `GITHUB_TOKEN` | 권장 | GitHub Personal Access Token (없으면 60회/시간 제한) |
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Yes | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes | Supabase anon key |
+| `GITHUB_TOKEN` | Recommended | GitHub Personal Access Token (60 requests/hour limit without it) |
 
-## TODO: GitHub Token 설정
+## TODO: GitHub Token Setup
 
-### 1. 토큰 발급
-1. https://github.com/settings/tokens 접속
-2. **Generate new token (classic)** 클릭
+### 1. Issue Token
+1. Go to https://github.com/settings/tokens
+2. Click **Generate new token (classic)**
 3. Note: `mission-control`
-4. Expiration: 원하는 기간
-5. **`public_repo`** 권한만 체크
-6. **Generate token** → 복사해두기
+4. Expiration: desired period
+5. Check only **`public_repo`** permission
+6. **Generate token** -> copy it
 
-### 2. Vercel에 토큰 추가
-1. https://vercel.com → `mission-control` 프로젝트 클릭
-2. **Settings** → **Environment Variables**
-3. 추가:
+### 2. Add Token to Vercel
+1. Go to https://vercel.com -> click `mission-control` project
+2. **Settings** -> **Environment Variables**
+3. Add:
    - Key: `GITHUB_TOKEN`
-   - Value: (복사한 토큰)
-   - Environment: **Production, Preview, Development** 전부 체크
+   - Value: (copied token)
+   - Environment: check **Production, Preview, Development** all
 4. **Save**
-5. **Deployments** → 최신 배포 **⋮** → **Redeploy**
+5. **Deployments** -> latest deployment **...** -> **Redeploy**
 
-## TODO: 다음 작업
+## TODO: Next Tasks
 
-- [ ] GitHub Token 발급 + Vercel 환경변수 설정 (위 참고)
-- [ ] Supabase 스냅샷 저장 (히스토리 추적)
-- [ ] 다크모드 토글
+- [ ] Issue GitHub Token + set Vercel environment variables (see above)
+- [ ] Supabase snapshot storage (history tracking)
+- [ ] Dark mode toggle
