@@ -135,17 +135,18 @@ async function fetchFileContent(
   return Buffer.from(data.content, 'base64').toString('utf-8');
 }
 
-// 레포 기본 정보
-async function fetchRepoInfo(repo: string): Promise<{ defaultBranch: string } | null> {
+// 레포 기본 정보 (pushed_at: 모든 브랜치 중 가장 최근 push 시각)
+async function fetchRepoInfo(repo: string): Promise<{ defaultBranch: string; pushedAt: string | null } | null> {
   interface GHRepo {
     default_branch: string;
+    pushed_at: string;
   }
 
   const data = await githubFetch<GHRepo>(
     `/repos/${GITHUB_OWNER}/${repo}`
   );
   if (!data) return null;
-  return { defaultBranch: data.default_branch };
+  return { defaultBranch: data.default_branch, pushedAt: data.pushed_at ?? null };
 }
 
 // --- CHANGELOG 파싱 ---
@@ -220,9 +221,17 @@ export async function scanProject(
     ]);
 
   const lastCommit = commits[0] ?? null;
+  const lastCommitDate = lastCommit?.date ?? null;
+  const pushedAt = repoInfo?.pushedAt ?? null;
+
+  // pushed_at은 모든 브랜치를 반영 — 비기본 브랜치 활동도 감지
+  const effectiveDate = (lastCommitDate && pushedAt)
+    ? (new Date(pushedAt) > new Date(lastCommitDate) ? pushedAt : lastCommitDate)
+    : lastCommitDate ?? pushedAt;
+
   let daysSinceCommit: number | null = null;
-  if (lastCommit) {
-    const diff = Date.now() - new Date(lastCommit.date).getTime();
+  if (effectiveDate) {
+    const diff = Date.now() - new Date(effectiveDate).getTime();
     daysSinceCommit = Math.floor(diff / (1000 * 60 * 60 * 24));
   }
 
@@ -239,7 +248,7 @@ export async function scanProject(
   return {
     project,
     git: {
-      lastCommitDate: lastCommit?.date ?? null,
+      lastCommitDate: effectiveDate,
       lastCommitMessage: lastCommit?.message ?? null,
       commitCountWeek: weekCount,
       recentCommits: commits,
@@ -271,9 +280,16 @@ export async function scanProjectDetail(
     ]);
 
   const lastCommit = commits[0] ?? null;
+  const lastCommitDate = lastCommit?.date ?? null;
+  const pushedAt = repoInfo?.pushedAt ?? null;
+
+  const effectiveDate = (lastCommitDate && pushedAt)
+    ? (new Date(pushedAt) > new Date(lastCommitDate) ? pushedAt : lastCommitDate)
+    : lastCommitDate ?? pushedAt;
+
   let daysSinceCommit: number | null = null;
-  if (lastCommit) {
-    const diff = Date.now() - new Date(lastCommit.date).getTime();
+  if (effectiveDate) {
+    const diff = Date.now() - new Date(effectiveDate).getTime();
     daysSinceCommit = Math.floor(diff / (1000 * 60 * 60 * 24));
   }
 
@@ -290,7 +306,7 @@ export async function scanProjectDetail(
   return {
     project,
     git: {
-      lastCommitDate: lastCommit?.date ?? null,
+      lastCommitDate: effectiveDate,
       lastCommitMessage: lastCommit?.message ?? null,
       commitCountWeek: weekCount,
       recentCommits: commits,
