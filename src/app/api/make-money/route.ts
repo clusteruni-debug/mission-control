@@ -6,7 +6,7 @@ export const revalidate = 60; // trades 60초 기준 (portfolio/engines/health�
 const BASE_URL =
   process.env.MAKE_MONEY_API_URL || 'http://localhost:3001';
 
-const VALID_PATHS = ['portfolio', 'health', 'engines', 'trades'] as const;
+const VALID_PATHS = ['portfolio', 'health', 'engines', 'trades', 'trades-deep'] as const;
 type ValidPath = (typeof VALID_PATHS)[number];
 
 export async function GET(request: NextRequest) {
@@ -19,7 +19,10 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const apiPath = path === 'trades' ? '/api/trades?limit=5' : `/api/${path}`;
+  const apiPath =
+    path === 'trades' ? '/api/trades?limit=5' :
+    path === 'trades-deep' ? '/api/trades?limit=100' :
+    `/api/${path}`;
 
   const result = await createProxyResponse(
     () => fetch(`${BASE_URL}${apiPath}`),

@@ -12,6 +12,8 @@ import { EventWidget } from '../EventWidget';
 import { Overview } from '../Overview';
 import { DocHealth } from '../DocHealth';
 import { ServiceControlPanel } from '../ServiceControlPanel';
+import { IncidentBoard } from '../IncidentBoard';
+import { DependencyImpact } from '../DependencyImpact';
 import type { ProjectSnapshot } from '@/types';
 import type { TabView } from './types';
 
@@ -61,6 +63,14 @@ export function TabContent({
 
       {activeTab === 'monitoring' && (
         <div className="space-y-4">
+          {/* Incident Board */}
+          <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
+            <IncidentBoard />
+          </div>
+
+          {/* Dependency Impact (only renders when services are down) */}
+          <DependencyImpact />
+
           <div className="grid gap-4 lg:grid-cols-2">
             <MakeMoneyWidget />
             <EventWidget />

@@ -7,6 +7,7 @@ import { DollarSign, RefreshCw, Loader2 } from 'lucide-react';
 import { PortfolioSummary } from './make-money/PortfolioSummary';
 import { EngineStatusList } from './make-money/EngineStatusList';
 import { RecentTrades } from './make-money/RecentTrades';
+import { DeepMonitoring } from './make-money/DeepMonitoring';
 import type { RawHealth, RawPortfolio, RawEngine, RawTrade } from './make-money/types';
 
 export function MakeMoneyWidget() {
@@ -139,6 +140,7 @@ export function MakeMoneyWidget() {
           {portfolio?.data && <PortfolioSummary portfolio={portfolio.data} />}
           {engines?.data && <EngineStatusList engines={engines.data} />}
           {trades?.data && <RecentTrades trades={trades.data} />}
+          <DeepMonitoring />
         </div>
       )}
     </div>

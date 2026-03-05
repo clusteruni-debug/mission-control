@@ -154,6 +154,24 @@ export interface Pm2ServiceInfo {
 
 export type ServiceAction = 'start' | 'stop' | 'restart';
 
+// --- Incidents ---
+
+export type IncidentSeverity = 'critical' | 'high' | 'medium' | 'low';
+export type IncidentStatus = 'open' | 'investigating' | 'resolved';
+
+export interface Incident {
+  id: number;
+  title: string;
+  description: string;
+  severity: IncidentSeverity;
+  status: IncidentStatus;
+  services_affected: string[];
+  detected_at: string;
+  resolved_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 // --- Task Board ---
 
 export interface TaskBoardItem {
