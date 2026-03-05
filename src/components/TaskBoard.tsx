@@ -12,6 +12,8 @@ import {
   Loader2,
   Search,
 } from 'lucide-react';
+import type { TaskType } from '@/types';
+import { TYPE_BADGE, TASK_TYPES } from './task-board/constants';
 
 interface Task {
   id: number;
@@ -19,6 +21,7 @@ interface Task {
   description: string;
   status: 'todo' | 'in_progress' | 'done';
   priority: 'high' | 'medium' | 'low';
+  type: TaskType;
   project: string;
   created_at: string;
   updated_at: string;
@@ -67,7 +70,9 @@ export function TaskBoard() {
   const [title, setTitle] = useState('');
   const [project, setProject] = useState('');
   const [priority, setPriority] = useState<Task['priority']>('medium');
+  const [taskType, setTaskType] = useState<TaskType>('task');
   const [adding, setAdding] = useState(false);
+  const [typeFilter, setTypeFilter] = useState<TaskType | 'all'>('all');
 
   // Expanded task
   const [expandedId, setExpandedId] = useState<number | null>(null);
@@ -101,7 +106,7 @@ export function TaskBoard() {
       const res = await fetch('/api/tasks', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: title.trim(), project, priority }),
+        body: JSON.stringify({ title: title.trim(), project, priority, type: taskType }),
       });
       if (!res.ok) throw new Error('작업 추가 실패');
       const data = await res.json();
@@ -109,6 +114,7 @@ export function TaskBoard() {
       setTitle('');
       setProject('');
       setPriority('medium');
+      setTaskType('task');
       titleInputRef.current?.focus();
     } catch {
       // silent
@@ -156,6 +162,7 @@ export function TaskBoard() {
   // Filter
   const needle = query.trim().toLowerCase();
   const filtered = tasks.filter((t) => {
+    if (typeFilter !== 'all' && (t.type || 'task') !== typeFilter) return false;
     if (!needle) return true;
     return (
       t.title.toLowerCase().includes(needle) ||
@@ -232,6 +239,15 @@ export function TaskBoard() {
           <option value="medium">보통</option>
           <option value="low">낮음</option>
         </select>
+        <select
+          value={taskType}
+          onChange={(e) => setTaskType(e.target.value as TaskType)}
+          className="rounded border border-gray-300 bg-white px-2 py-1.5 text-sm text-gray-700 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-200"
+        >
+          {TASK_TYPES.map((t) => (
+            <option key={t} value={t}>{TYPE_BADGE[t].label}</option>
+          ))}
+        </select>
         <button
           type="button"
           onClick={addTask}
@@ -260,6 +276,40 @@ export function TaskBoard() {
           />
         </div>
       )}
+
+      {/* Type filter tabs */}
+      <div className="flex flex-wrap gap-1.5">
+        <button
+          type="button"
+          onClick={() => setTypeFilter('all')}
+          className={cn(
+            'rounded-full px-3 py-1 text-xs font-medium transition-colors',
+            typeFilter === 'all'
+              ? 'bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700'
+          )}
+        >
+          전체
+        </button>
+        {TASK_TYPES.map((t) => {
+          const meta = TYPE_BADGE[t];
+          return (
+            <button
+              key={t}
+              type="button"
+              onClick={() => setTypeFilter(t)}
+              className={cn(
+                'rounded-full px-3 py-1 text-xs font-medium transition-colors',
+                typeFilter === t
+                  ? 'bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900'
+                  : meta.color + ' hover:opacity-80'
+              )}
+            >
+              {meta.label}
+            </button>
+          );
+        })}
+      </div>
 
       {/* Status groups */}
       {STATUS_ORDER.map((status) => (
@@ -318,6 +368,17 @@ export function TaskBoard() {
                     >
                       {PRIORITY_LABELS[task.priority]}
                     </span>
+
+                    {task.type && task.type !== 'task' && (
+                      <span
+                        className={cn(
+                          'rounded px-1.5 py-0.5 text-xs font-medium',
+                          TYPE_BADGE[task.type]?.color ?? ''
+                        )}
+                      >
+                        {TYPE_BADGE[task.type]?.label ?? task.type}
+                      </span>
+                    )}
 
                     <button
                       type="button"

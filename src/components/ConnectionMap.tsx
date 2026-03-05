@@ -3,7 +3,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { PROJECTS } from '@/lib/constants';
 import { cn } from '@/lib/utils';
+import { CONNECTION_TYPE_META } from '@/lib/connection-utils';
 import { ArrowRight, Link2 } from 'lucide-react';
+import type { ConnectionType } from '@/types';
 import type { ServiceStatus } from '@/types/status';
 import { getStatusColor } from '@/types/status';
 
@@ -12,6 +14,8 @@ interface Connection {
   to: string;
   fromName: string;
   toName: string;
+  type?: ConnectionType;
+  label?: string;
   status: ServiceStatus;
   fetchedAt: string | null;
   error?: string;
@@ -128,8 +132,9 @@ export function ConnectionMap() {
 
     for (const project of PROJECTS) {
       if (!project.connections) continue;
-      for (const targetFolder of project.connections) {
-        const key = [project.folder, targetFolder].sort().join('\u2194');
+      for (const conn of project.connections) {
+        const targetFolder = conn.target;
+        const key = [project.folder, targetFolder].sort().join('\u2194') + ':' + conn.type;
         if (seen.has(key)) continue;
         seen.add(key);
 
@@ -150,6 +155,8 @@ export function ConnectionMap() {
           to: targetFolder,
           fromName: project.name,
           toName: target.name,
+          type: conn.type,
+          label: conn.label,
           status,
           fetchedAt,
           error,
@@ -172,7 +179,7 @@ export function ConnectionMap() {
     <div className="space-y-3">
       {connections.map((conn) => (
         <div
-          key={`${conn.from}-${conn.to}`}
+          key={`${conn.from}-${conn.to}-${conn.type}`}
           title={
             conn.fetchedAt
               ? `updated: ${new Date(conn.fetchedAt).toLocaleString('ko-KR')}${conn.error ? ` | ${conn.error}` : ''}`
@@ -207,6 +214,11 @@ export function ConnectionMap() {
           <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
             {conn.toName}
           </span>
+          {conn.type && (
+            <span className={cn('rounded px-1.5 py-0.5 text-xs font-medium', CONNECTION_TYPE_META[conn.type].bg, CONNECTION_TYPE_META[conn.type].color)}>
+              {CONNECTION_TYPE_META[conn.type].label}{conn.label ? ` · ${conn.label}` : ''}
+            </span>
+          )}
           <span
             className={cn(
               'ml-auto rounded-full px-2 py-0.5 text-xs font-medium',

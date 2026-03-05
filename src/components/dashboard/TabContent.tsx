@@ -5,6 +5,7 @@ import { ProjectCard } from '../ProjectCard';
 import { ActivityFeed } from '../ActivityFeed';
 import { ProductivityStats } from '../ProductivityStats';
 import { ConnectionMap } from '../ConnectionMap';
+import { InfrastructureMap } from '../InfrastructureMap';
 import { TaskBoard } from '../TaskBoard';
 import { MakeMoneyWidget } from '../MakeMoneyWidget';
 import { EventWidget } from '../EventWidget';
@@ -67,6 +68,12 @@ export function TabContent({
               프로젝트 간 연동 현황
             </h2>
             <ConnectionMap />
+          </div>
+          <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
+            <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+              인프라 인스턴스 맵
+            </h2>
+            <InfrastructureMap />
           </div>
         </div>
       )}

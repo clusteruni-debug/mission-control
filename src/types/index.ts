@@ -2,6 +2,23 @@ export type ProjectPlatform = 'windows' | 'wsl' | 'both';
 
 export type ProjectPriority = 'high' | 'medium' | 'low' | 'maintenance';
 
+export type ConnectionType =
+  | 'supabase-shared'
+  | 'firebase'
+  | 'api-proxy'
+  | 'api-direct'
+  | 'url-handoff'
+  | 'chrome-extension'
+  | 'shared-instance';
+
+export interface ConnectionDef {
+  target: string;
+  type: ConnectionType;
+  label?: string;
+}
+
+export type TaskType = 'task' | 'backlog' | 'bug' | 'feature' | 'integration-idea' | 'maintenance';
+
 export interface ProjectConfig {
   name: string;
   folder: string;
@@ -10,7 +27,7 @@ export interface ProjectConfig {
   techStack: string[];
   category: 'running' | 'dev' | 'legacy' | 'tool';
   deployUrl?: string;
-  connections?: string[];
+  connections?: ConnectionDef[];
   platform?: ProjectPlatform;
   runCmd?: string;
   port?: number;
@@ -132,6 +149,7 @@ export interface UserTask {
   description: string;
   status: 'todo' | 'in_progress' | 'done';
   priority: 'high' | 'medium' | 'low';
+  type: TaskType;
   project: string;
   created_at: string;
   updated_at: string;

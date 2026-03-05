@@ -15,7 +15,10 @@ export const PROJECTS: ProjectConfig[] = [
     platform: 'windows',
     runCmd: 'npx serve -p 5000',
     port: 5000,
-    connections: ['telegram-event-bot', '자산관리', 'x-article-editor'],
+    connections: [
+      { target: 'telegram-event-bot', type: 'api-direct', label: 'Supabase REST read' },
+      { target: 'x-article-editor', type: 'url-handoff' },
+    ],
     phase: '운영 중 — 지속적 UX 개선',
     completionPct: 85,
     nextTasks: ['PC 최적화', 'Firebase 동기화 핑퐁 방지 검증'],
@@ -31,7 +34,9 @@ export const PROJECTS: ProjectConfig[] = [
     platform: 'windows',
     runCmd: 'cd react-app && npx vite --port 5100',
     port: 5100,
-    connections: ['make-money-project'],
+    connections: [
+      { target: 'make-money-project', type: 'supabase-shared', label: 'Instance #2' },
+    ],
     phase: '기능 완성 — 페이퍼 통계 분석 대기',
     completionPct: 75,
     nextTasks: ['transfer vs dual_exchange 전략 성과 비교', '전략별 수익률 대시보드'],
@@ -48,7 +53,9 @@ export const PROJECTS: ProjectConfig[] = [
     platform: 'windows',
     runCmd: 'npx vite --port 5140',
     port: 5140,
-    connections: ['To-do-list-for-adhd', 'kimchi-premium'],
+    connections: [
+      { target: 'kimchi-premium', type: 'shared-instance', label: 'Instance #2' },
+    ],
     phase: '운영 중 — CSS 전면 개선 완료',
     completionPct: 88,
     nextTasks: ['저사양 backdrop-filter 테스트', 'Supabase 스키마 문서화'],
@@ -64,7 +71,10 @@ export const PROJECTS: ProjectConfig[] = [
     deployUrl: 'https://telegram-event-bot-ashy.vercel.app',
     platform: 'wsl',
     runCmd: 'systemctl --user status telegram-event-bot',
-    connections: ['To-do-list-for-adhd', 'x-article-editor'],
+    connections: [
+      { target: 'To-do-list-for-adhd', type: 'api-direct' },
+      { target: 'x-article-editor', type: 'supabase-shared', label: 'Instance #1' },
+    ],
     phase: '운영 중 — 분류 고도화 + 하이퍼링크 파싱',
     completionPct: 82,
     nextTasks: ['분류 정확도 모니터링', 'WSL↔Win 파일 동기화'],
@@ -97,7 +107,10 @@ export const PROJECTS: ProjectConfig[] = [
     platform: 'windows',
     runCmd: 'npx next dev -p 3010',
     port: 3010,
-    connections: ['To-do-list-for-adhd', 'telegram-event-bot'],
+    connections: [
+      { target: 'To-do-list-for-adhd', type: 'url-handoff' },
+      { target: 'telegram-event-bot', type: 'supabase-shared', label: 'Instance #1' },
+    ],
     phase: '운영 중 — UX 지속 개선',
     completionPct: 85,
     nextTasks: ['휴지통 페이지네이션', '분류 정확도 모니터링'],
@@ -160,7 +173,9 @@ export const PROJECTS: ProjectConfig[] = [
     platform: 'windows',
     runCmd: 'cd server && node index.js',
     port: 3001,
-    connections: ['kimchi-premium'],
+    connections: [
+      { target: 'kimchi-premium', type: 'supabase-shared', label: 'Instance #2' },
+    ],
     phase: '실거래 운영 — 5엔진 활성 + recovery 전략',
     completionPct: 78,
     nextTasks: ['recovery 20건 성과 평가', '$50 시 balanced 전환', 'evaluateMarketSignal 리팩토링'],
@@ -219,7 +234,9 @@ export const PROJECTS: ProjectConfig[] = [
     platform: 'windows',
     runCmd: 'npx electron-vite dev',
     port: 5150,
-    connections: ['ai-hub-extension'],
+    connections: [
+      { target: 'ai-hub-extension', type: 'chrome-extension' },
+    ],
     phase: 'v0.3.0 — Lazy Loading + 분석 리포트',
     completionPct: 80,
     nextTasks: ['리포트 가져오기 실사용 테스트', 'MCP 연동 Phase 2'],
@@ -233,7 +250,9 @@ export const PROJECTS: ProjectConfig[] = [
     techStack: ['Chrome Extension MV3', 'Supabase', 'esbuild'],
     category: 'tool',
     platform: 'windows',
-    connections: ['ai-hub'],
+    connections: [
+      { target: 'ai-hub', type: 'chrome-extension' },
+    ],
     phase: '초기 개발 — Grok/AskSurf 추가, 실테스트 대기',
     completionPct: 55,
     nextTasks: ['Gemini/Grok/AskSurf 실제 저장 테스트', 'Chrome Web Store 배포'],
@@ -250,6 +269,12 @@ export const PROJECTS: ProjectConfig[] = [
     platform: 'windows',
     runCmd: 'npm run dev',
     port: 3000,
+    connections: [
+      { target: 'make-money-project', type: 'api-proxy' },
+      { target: 'telegram-event-bot', type: 'api-proxy' },
+      { target: 'kimchi-premium', type: 'api-proxy' },
+      { target: 'ai-hub', type: 'api-proxy' },
+    ],
     phase: 'Phase 1-4 완료 — 서비스 모니터링 확장',
     completionPct: 82,
     nextTasks: ['mc_snapshots 테이블 생성', '스냅샷 수집 스케줄러'],
@@ -284,3 +309,16 @@ export const PRIORITY_COLORS: Record<import('@/types').ProjectPriority, string> 
   low: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
   maintenance: 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300',
 };
+
+export interface InfraInstance {
+  id: string;
+  name: string;
+  projects: string[];
+  tableCount?: number;
+}
+
+export const INFRA_INSTANCES: InfraInstance[] = [
+  { id: 'supabase-1', name: 'Supabase #1 (hgygyilcr...)', projects: ['x-article-editor', 'mission-control', 'ai-hub', 'telegram-event-bot'], tableCount: 13 },
+  { id: 'supabase-2', name: 'Supabase #2 (mrgbwlhhn...)', projects: ['자산관리', 'kimchi-premium', 'make-money-project'], tableCount: 17 },
+  { id: 'firebase', name: 'Firebase (independent)', projects: ['baby-care', 'Saitama-training', 'To-do-list-for-adhd'] },
+];

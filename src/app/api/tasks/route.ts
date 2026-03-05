@@ -28,7 +28,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { title, description, status, priority, project } = body;
+    const { title, description, status, priority, project, type } = body;
 
     if (!title?.trim()) {
       return NextResponse.json({ error: 'title required' }, { status: 400 });
@@ -42,6 +42,7 @@ export async function POST(request: Request) {
         description: description || '',
         status: status || 'todo',
         priority: priority || 'medium',
+        type: type || 'task',
         project: project || '',
       })
       .select()
