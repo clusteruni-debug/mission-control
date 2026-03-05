@@ -14,6 +14,7 @@ import { DocHealth } from '../DocHealth';
 import { ServiceControlPanel } from '../ServiceControlPanel';
 import { IncidentBoard } from '../IncidentBoard';
 import { DependencyImpact } from '../DependencyImpact';
+import { AgentQueuePanel } from '../AgentQueuePanel';
 import type { ProjectSnapshot } from '@/types';
 import type { TabView } from './types';
 
@@ -96,6 +97,15 @@ export function TabContent({
             서비스 제어
           </h2>
           <ServiceControlPanel />
+        </div>
+      )}
+
+      {activeTab === 'agent-queue' && (
+        <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
+          <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+            에이전트 큐
+          </h2>
+          <AgentQueuePanel />
         </div>
       )}
 

@@ -405,3 +405,53 @@ export const INCIDENT_STATUS_COLORS: Record<IncidentStatus, string> = {
 
 // Make Money tuning date (for 3-period win rate comparison)
 export const MAKE_MONEY_TUNING_DATE = new Date('2026-03-01T00:00:00Z').getTime();
+
+// ─── Agent Queue ───
+
+import type { AgentTaskPhase } from '@/types';
+
+export const AGENT_PHASE_LABELS: Record<AgentTaskPhase, string> = {
+  proposed: '제안됨',
+  pending: '대기',
+  plan: '계획 중',
+  build: '빌드 중',
+  review: '검토 중',
+  done: '완료',
+  failed: '실패',
+  escalated: '에스컬레이션',
+};
+
+export const AGENT_PHASE_COLORS: Record<AgentTaskPhase, string> = {
+  proposed: 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300',
+  pending: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
+  plan: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
+  build: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900 dark:text-cyan-300',
+  review: 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300',
+  done: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300',
+  failed: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300',
+  escalated: 'bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300',
+};
+
+export const AGENT_PRIORITY_LABELS: Record<number, string> = {
+  1: '높음',
+  2: '보통',
+  3: '낮음',
+};
+
+// ─── Auto-Recovery Rules ───
+
+export interface RecoveryRule {
+  id: string;
+  service: string;
+  condition: 'errored' | 'stopped';
+  action: 'restart';
+  maxRetries: number;
+  enabled: boolean;
+}
+
+export const RECOVERY_RULES: RecoveryRule[] = [
+  { id: 'r1', service: 'make-money', condition: 'errored', action: 'restart', maxRetries: 2, enabled: true },
+  { id: 'r2', service: 'kimchi-bot', condition: 'errored', action: 'restart', maxRetries: 2, enabled: true },
+  { id: 'r3', service: 'tradinglab', condition: 'errored', action: 'restart', maxRetries: 2, enabled: true },
+  { id: 'r4', service: 'telegram-event-bot', condition: 'errored', action: 'restart', maxRetries: 2, enabled: true },
+];

@@ -45,6 +45,7 @@ export function CommandPalette({
       { id: 'tab-activity', title: '활동으로 이동', icon: Activity, execute: () => onNavigate('activity') },
       { id: 'tab-board', title: '작업 보드로 이동', icon: LayoutDashboard, execute: () => onNavigate('board') },
       { id: 'tab-services', title: '서비스 제어로 이동', icon: Server, execute: () => onNavigate('services') },
+      { id: 'tab-agent-queue', title: '에이전트 큐로 이동', icon: Bot, execute: () => onNavigate('agent-queue') },
       { id: 'quick-incidents', title: '인시던트 보드로 이동', hint: '모니터링', icon: AlertTriangle, execute: () => onNavigate('monitoring') },
       { id: 'quick-balance', title: 'Make Money 잔고 조회', hint: '빠른 조회', icon: Wallet, execute: () => onAction('quick_make_money_balance') },
       { id: 'quick-watchbot', title: 'Watch Bot 상태 조회', hint: '빠른 조회', icon: Bot, execute: () => onAction('quick_watchbot_status') },

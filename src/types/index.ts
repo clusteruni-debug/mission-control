@@ -172,6 +172,33 @@ export interface Incident {
   updated_at: string;
 }
 
+// --- Agent Queue ---
+
+export type AgentTaskPhase = 'proposed' | 'pending' | 'plan' | 'build' | 'review' | 'done' | 'failed' | 'escalated';
+export type AgentTaskSource = 'manual' | 'patrol-bug' | 'patrol-roadmap' | 'patrol-quality';
+
+export interface AgentTask {
+  id: string;
+  created_at: string;
+  project: string;
+  title: string;
+  description: string;
+  priority: number;
+  phase: AgentTaskPhase;
+  parent_id: string | null;
+  role: string | null;
+  agent: string | null;
+  attempt: number;
+  review_result: string | null;
+  review_feedback: string | null;
+  started_at: string | null;
+  finished_at: string | null;
+  result_summary: string | null;
+  commit_sha: string | null;
+  error: string | null;
+  source: AgentTaskSource;
+}
+
 // --- Task Board ---
 
 export interface TaskBoardItem {
