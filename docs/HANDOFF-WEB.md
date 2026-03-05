@@ -1,6 +1,6 @@
 # Vibe Coding Workspace — Claude Web Handoff
 
-> **Auto-generated**: 2026-03-06 01:01 KST
+> **Auto-generated**: 2026-03-06 01:34 KST
 > **Purpose**: Share with Claude.ai web to transfer full workspace context
 
 ---
@@ -44,14 +44,14 @@
 | 2 | **Asset Manager** | Vite + Vanilla JS + Supabase + Chart.js | Vercel | chore: add .gitattributes for LF line ending normalization | 1d |
 | 3 | **Navigator (todolist)** | HTML + Vanilla JS + Firebase | GitHub Pages | feat: 완료 작업 수정 + 히스토리 기록 일괄 삭제 | 0d |
 | 4 | **Baby Care** | Next.js 16 + TS + Firebase | Vercel | chore: add .gitattributes for LF line ending normalization | 1d |
-| 5 | **Kimchi Premium** | React + Vite + WebSocket | Local | fix: disable v2 strategies without exit logic + simplify Telegram messages | 0d |
+| 5 | **Kimchi Premium** | React + Vite + WebSocket | Local | docs: add HANDOFF-WEB.md for project context | 0d |
 | 6 | **Telegram Event Bot** | Python + Flask + Supabase | Local | docs: regenerate HANDOFF-WEB.md via handoff-generate.py | 0d |
 | 7 | **Portfolio** | Vite + React + TS + Tailwind + Framer | GitHub Pages | chore: add .gitattributes for LF line ending normalization | 1d |
 | 8 | **Text RPG** | Vite + Vanilla JS | Local | chore: add .gitattributes for LF line ending normalization | 1d |
 | 9 | **Saitama Training** | React + TS + Firebase + zustand | Vercel | chore: add .gitattributes for LF line ending normalization | 1d |
 | 10 | **Make Money** | Node.js + Express + SQLite + Claude AI | Local | fix: sports-live-score 유동성 바이패스 + 시그널 트래킹 강화 + 튜닝 거버넌스 | 0d |
 | 11 | **OpenClaw Gateway** | OpenClaw framework + Node.js | WSL systemd | docs: simplify CLAUDE.md — replace retired WatchBot section with systemd note | 0d |
-| 12 | **Mission Control** | Next.js 16 + TS + Tailwind v4 | Vercel | feat: Phase 1 Command & Control — service status, control, and log viewer | 0d |
+| 12 | **Mission Control** | Next.js 16 + TS + Tailwind v4 | Vercel | feat: Phase 2 Enhanced Intelligence — incidents, dependency impact, alerting, deep monitoring | 0d |
 | 13 | **AI Hub** | Electron + Vanilla JS + Supabase | Local | chore: add .gitattributes for LF line ending normalization | 1d |
 | 14 | **AI Hub Extension** | Chrome Extension MV3 + Supabase | Chrome Web Store | chore: add .gitattributes for LF line ending normalization | 1d |
 | 15 | **TradingLab** | Python + pandas + pydantic | Local | docs: add HANDOFF-WEB.md for project context | 0d |
@@ -64,16 +64,16 @@
 |---------|---------|---------------|
 | **X Article Editor** | 4 | feat: Knowledge Connection — quick capture, stale reminders, selection insight, related sidebar |
 | **Asset Manager** | 7 | chore: add .gitattributes for LF line ending normalization |
-| **Navigator (todolist)** | 9 | feat: 완료 작업 수정 + 히스토리 기록 일괄 삭제 |
+| **Navigator (todolist)** | 8 | feat: 완료 작업 수정 + 히스토리 기록 일괄 삭제 |
 | **Baby Care** | 3 | chore: add .gitattributes for LF line ending normalization |
-| **Kimchi Premium** | 8 | fix: disable v2 strategies without exit logic + simplify Telegram messages |
-| **Telegram Event Bot** | 51 | docs: regenerate HANDOFF-WEB.md via handoff-generate.py |
+| **Kimchi Premium** | 10 | docs: add HANDOFF-WEB.md for project context |
+| **Telegram Event Bot** | 55 | docs: regenerate HANDOFF-WEB.md via handoff-generate.py |
 | **Portfolio** | 5 | chore: add .gitattributes for LF line ending normalization |
 | **Text RPG** | 4 | chore: add .gitattributes for LF line ending normalization |
 | **Saitama Training** | 3 | chore: add .gitattributes for LF line ending normalization |
 | **Make Money** | 24 | fix: sports-live-score 유동성 바이패스 + 시그널 트래킹 강화 + 튜닝 거버넌스 |
 | **OpenClaw Gateway** | 5 | docs: simplify CLAUDE.md — replace retired WatchBot section with systemd note |
-| **Mission Control** | 10 | feat: Phase 1 Command & Control — service status, control, and log viewer |
+| **Mission Control** | 12 | feat: Phase 2 Enhanced Intelligence — incidents, dependency impact, alerting, deep monitoring |
 | **AI Hub** | 15 | chore: add .gitattributes for LF line ending normalization |
 | **AI Hub Extension** | 3 | chore: add .gitattributes for LF line ending normalization |
 | **TradingLab** | 20 | docs: add HANDOFF-WEB.md for project context |
@@ -112,15 +112,24 @@
 - All sellers running on WSL. Revenue mainly from token trading fees
 - GodtRiskOps: 6 offerings, signature `rug_radar`
 
-### Mission Control — Phase 1 Complete (2026-03-06)
-- **Command & Control**: Services tab with pm2/systemd status, start/stop/restart, log viewer
-- **20 services**: 19 pm2 + 1 WSL systemd, category-grouped (always-on/dev/paper-trading/WSL)
-- **Security**: Bearer auth, regex allowlist, protected service confirmation, Vercel degradation
-- **Next**: Phase 2 (Incident Board, Dependency Impact, Enhanced Alerting)
+### Mission Control — Phase 1+2 Complete (2026-03-06)
+- **Phase 1 Command & Control**: Services tab, pm2/systemd status, start/stop/restart, log viewer, 20 services
+- **Phase 2 Enhanced Intelligence**: Incident Board (CRUD+auto-detect), Dependency Impact (blast radius), Telegram Alerting, Deep Monitoring (risk gauge+5-period win rate)
+- **Next**: Set TELEGRAM_ALERT_CHAT_ID, Phase 3 (Automation — Agent Queue, Auto-Recovery, AI Summary)
 
 ### Planned (Not Started)
 - **INTEG-PHASE2**: Asset Manager import API -> automated revenue/price sync
 - **AGENT-QUEUE**: Autonomous AI Agent system (plan at `docs/plans/PLAN-AGENT-QUEUE.md`)
+
+---
+
+---
+
+---
+
+---
+
+---
 
 ---
 
@@ -165,13 +174,18 @@
 
 ## §8 Recent Diary
 
-### 2026-03-06 (5 sessions)
+### 2026-03-06 (10 sessions)
 
 1. Session 1 (Claude Code, Opus 4.6)
 2. Session 2 (Claude Code, Opus 4.6)
 3. Session 2b (Claude Code, Opus 4.6)
 4. Session 3 (Claude Code, Opus 4.6)
-5. Session 4 (Claude Code, Opus 4.6)
+5. Session 3b (Claude Code, Opus 4.6)
+6. Session 3c (Claude Code, Opus 4.6)
+7. Session 4 (Claude Code, Opus 4.6)
+8. Session 5 (Claude Code, Opus 4.6)
+9. Session 6 (Claude Code, Opus 4.6)
+10. Session 7 (Claude Code, Opus 4.6)
 
 ### 2026-03-05 (17 sessions)
 
@@ -310,4 +324,4 @@ Next execution: (Windows / WSL / both)
 
 ---
 
-*Generated by handoff-generate.py on 2026-03-06 01:01 KST*
+*Generated by handoff-generate.py on 2026-03-06 01:34 KST*
