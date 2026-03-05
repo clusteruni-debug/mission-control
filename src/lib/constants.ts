@@ -1,4 +1,4 @@
-import type { ProjectConfig } from '@/types';
+import type { ProjectConfig, ServiceCategory, ServiceRuntime } from '@/types';
 
 // 워크스페이스 프로젝트 정의
 export const GITHUB_OWNER = 'clusteruni-debug';
@@ -308,6 +308,58 @@ export const PRIORITY_COLORS: Record<import('@/types').ProjectPriority, string> 
   medium: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300',
   low: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
   maintenance: 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300',
+};
+
+// ─── Service Registry ───
+
+export interface ServiceRegistryEntry {
+  name: string;
+  runtime: ServiceRuntime;
+  category: ServiceCategory;
+  projectFolder?: string;
+  port?: number;
+  autorestart: boolean;
+  protected: boolean;
+}
+
+export const SERVICE_REGISTRY: ServiceRegistryEntry[] = [
+  // Always-on (autorestart: true)
+  { name: 'make-money', runtime: 'pm2', category: 'always-on', projectFolder: 'make-money-project', port: 3001, autorestart: true, protected: true },
+  { name: 'kimchi-bot', runtime: 'pm2', category: 'always-on', projectFolder: 'kimchi-premium', autorestart: true, protected: false },
+  { name: 'tradinglab', runtime: 'pm2', category: 'always-on', projectFolder: 'coin-test-project', port: 8787, autorestart: true, protected: false },
+
+  // Dev servers (autorestart: false)
+  { name: 'make-money-ui', runtime: 'pm2', category: 'dev-server', projectFolder: 'make-money-project', port: 3002, autorestart: false, protected: false },
+  { name: 'mission-control', runtime: 'pm2', category: 'dev-server', projectFolder: 'mission-control', port: 3000, autorestart: false, protected: false },
+  { name: 'x-article-editor', runtime: 'pm2', category: 'dev-server', projectFolder: 'x-article-editor', port: 3010, autorestart: false, protected: false },
+  { name: 'baby-care', runtime: 'pm2', category: 'dev-server', projectFolder: 'baby-care', port: 3020, autorestart: false, protected: false },
+  { name: 'navigator', runtime: 'pm2', category: 'dev-server', projectFolder: 'todolist', port: 5000, autorestart: false, protected: false },
+  { name: 'kimchi-premium', runtime: 'pm2', category: 'dev-server', projectFolder: 'kimchi-premium', port: 5100, autorestart: false, protected: false },
+  { name: 'portfolio', runtime: 'pm2', category: 'dev-server', projectFolder: 'portfolio', port: 5110, autorestart: false, protected: false },
+  { name: 'text-rpg', runtime: 'pm2', category: 'dev-server', projectFolder: 'text-rpg', port: 5120, autorestart: false, protected: false },
+  { name: 'saitama-training', runtime: 'pm2', category: 'dev-server', projectFolder: 'Saitama-training', port: 5130, autorestart: false, protected: false },
+  { name: 'asset-manager', runtime: 'pm2', category: 'dev-server', projectFolder: '자산관리', port: 5140, autorestart: false, protected: false },
+  { name: 'ai-hub', runtime: 'pm2', category: 'dev-server', projectFolder: 'ai-hub', port: 5150, autorestart: false, protected: false },
+  { name: 'telegram-bot', runtime: 'pm2', category: 'dev-server', projectFolder: 'telegram-event-bot', autorestart: false, protected: false },
+  { name: 'telegram-web', runtime: 'pm2', category: 'dev-server', projectFolder: 'telegram-event-bot', port: 5002, autorestart: false, protected: false },
+
+  // Paper trading
+  { name: 'tradinglab-paper-day', runtime: 'pm2', category: 'paper-trading', projectFolder: 'coin-test-project', autorestart: false, protected: false },
+  { name: 'tradinglab-paper-scalp', runtime: 'pm2', category: 'paper-trading', projectFolder: 'coin-test-project', autorestart: false, protected: false },
+
+  // WSL systemd services
+  { name: 'telegram-event-bot', runtime: 'wsl-systemd', category: 'wsl', autorestart: true, protected: false },
+];
+
+export const SERVICE_NAME_REGEX = /^[a-z0-9-]+$/;
+
+export const CATEGORY_ORDER: ServiceCategory[] = ['always-on', 'wsl', 'dev-server', 'paper-trading'];
+
+export const SERVICE_CATEGORY_LABELS: Record<ServiceCategory, string> = {
+  'always-on': '상시 운영',
+  'dev-server': '개발 서버',
+  'paper-trading': '페이퍼 트레이딩',
+  'wsl': 'WSL',
 };
 
 export interface InfraInstance {

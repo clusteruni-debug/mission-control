@@ -129,6 +129,31 @@ export interface MakeMoneyTrade {
   timestamp: string;
 }
 
+// --- Service Control ---
+
+export type Pm2Status = 'online' | 'stopping' | 'stopped' | 'errored' | 'launching';
+
+export type ServiceRuntime = 'pm2' | 'wsl-systemd' | 'manual';
+
+export type ServiceCategory = 'always-on' | 'dev-server' | 'paper-trading' | 'wsl';
+
+export interface Pm2ServiceInfo {
+  name: string;
+  pm_id: number | null;
+  status: Pm2Status | 'active' | 'inactive' | 'failed' | 'not_registered' | 'unknown';
+  cpu: number | null;
+  memory: number | null;
+  uptime: number | null;
+  restarts: number;
+  runtime: ServiceRuntime;
+  autorestart: boolean;
+  port: number | null;
+  category: ServiceCategory;
+  protected: boolean;
+}
+
+export type ServiceAction = 'start' | 'stop' | 'restart';
+
 // --- Task Board ---
 
 export interface TaskBoardItem {

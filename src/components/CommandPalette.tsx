@@ -9,6 +9,7 @@ import {
   Bot,
   Wallet,
   Activity,
+  Server,
 } from 'lucide-react';
 
 interface CommandPaletteProps {
@@ -42,6 +43,7 @@ export function CommandPalette({
       { id: 'tab-monitoring', title: '모니터링으로 이동', icon: Activity, execute: () => onNavigate('monitoring') },
       { id: 'tab-activity', title: '활동으로 이동', icon: Activity, execute: () => onNavigate('activity') },
       { id: 'tab-board', title: '작업 보드로 이동', icon: LayoutDashboard, execute: () => onNavigate('board') },
+      { id: 'tab-services', title: '서비스 제어로 이동', icon: Server, execute: () => onNavigate('services') },
       { id: 'quick-balance', title: 'Make Money 잔고 조회', hint: '빠른 조회', icon: Wallet, execute: () => onAction('quick_make_money_balance') },
       { id: 'quick-watchbot', title: 'Watch Bot 상태 조회', hint: '빠른 조회', icon: Bot, execute: () => onAction('quick_watchbot_status') },
       { id: 'quick-events', title: '이벤트 참여율 조회', hint: '빠른 조회', icon: Activity, execute: () => onAction('quick_event_participation') },

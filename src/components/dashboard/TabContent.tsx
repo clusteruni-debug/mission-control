@@ -11,6 +11,7 @@ import { MakeMoneyWidget } from '../MakeMoneyWidget';
 import { EventWidget } from '../EventWidget';
 import { Overview } from '../Overview';
 import { DocHealth } from '../DocHealth';
+import { ServiceControlPanel } from '../ServiceControlPanel';
 import type { ProjectSnapshot } from '@/types';
 import type { TabView } from './types';
 
@@ -76,6 +77,15 @@ export function TabContent({
             </h2>
             <InfrastructureMap />
           </div>
+        </div>
+      )}
+
+      {activeTab === 'services' && (
+        <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
+          <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+            서비스 제어
+          </h2>
+          <ServiceControlPanel />
         </div>
       )}
 
