@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 export const revalidate = 300; // 5분 캐시
 
-// Watch Bot (구 OpenClaw) health_api.py 실제 응답 형식
+// WatchBot health_api.py 실제 응답 형식
 export interface BotHealthResponse {
   recent_tasks: {
     id: number;
@@ -24,7 +24,7 @@ export interface BotHealthResponse {
 
 export async function GET() {
   const healthUrl =
-    process.env.OPENCLAW_HEALTH_URL || 'http://localhost:7100/health';
+    process.env.WATCHBOT_HEALTH_URL || 'http://localhost:7100/health';
 
   try {
     const controller = new AbortController();

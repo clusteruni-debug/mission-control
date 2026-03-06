@@ -10,7 +10,7 @@ type SnapshotRow = {
   created_at: string;
   project_stats: Record<string, unknown>;
   make_money: Record<string, unknown>;
-  openclaw: Record<string, unknown>;
+  watchbot: Record<string, unknown>;
   events: Record<string, unknown>;
 };
 
@@ -130,7 +130,7 @@ export async function POST(request: NextRequest) {
     const supabase = getSupabaseAdmin();
     const origin = request.nextUrl.origin;
 
-    const [makeMoney, openclaw, events] = await Promise.all([
+    const [makeMoney, watchbot, events] = await Promise.all([
       fetchJsonOrOffline(`${origin}/api/make-money?path=portfolio`, 'make-money'),
       fetchJsonOrOffline(`${origin}/api/bot-status`, 'watchbot'),
       fetchJsonOrOffline(`${origin}/api/telegram-bot?path=stats`, 'telegram'),
@@ -139,7 +139,7 @@ export async function POST(request: NextRequest) {
     const payload = {
       project_stats: buildProjectStats(),
       make_money: makeMoney,
-      openclaw: openclaw,
+      openclaw: watchbot,  // DB column name is still 'openclaw' (Supabase migration needed to rename)
       events: events,
     };
 

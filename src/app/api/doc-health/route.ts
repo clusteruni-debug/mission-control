@@ -77,7 +77,7 @@ function checkSection6(handoffContent: string, projectCommits: Map<string, numbe
   const sections = s6Match[1].match(/###\s+(.+)/g) || [];
   const titleToProject: Record<string, string> = {
     'make money': 'make-money-project',
-    'openclaw': 'openclaw-bot',
+    'watchbot': 'openclaw-bot',
     'kimchi': 'Kimpbotforme',
     'navigator': 'To-do-list-for-adhd',
     'mission control': 'mission-control',

@@ -18,7 +18,7 @@ Vercel (git push = auto deploy)
 src/
 ├── app/
 │   ├── page.tsx                # Dashboard entry point
-│   ├── api/                    # scan, feed, bot-status, task-board, make-money, telegram-bot, openclaw-command, snapshot, trades-sync
+│   ├── api/                    # scan, feed, bot-status, task-board, make-money, telegram-bot, snapshot, trades-sync
 │   └── project/[folder]/       # Project detail (orchestrator -> project-detail/)
 ├── components/
 │   ├── Dashboard.tsx            # Main orchestrator -> dashboard/

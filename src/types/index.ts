@@ -25,7 +25,7 @@ export interface ProjectConfig {
   repo: string;
   description: string;
   techStack: string[];
-  category: 'running' | 'dev' | 'legacy' | 'tool';
+  category: 'running' | 'dev' | 'legacy' | 'tool' | 'stopped';
   deployUrl?: string;
   connections?: ConnectionDef[];
   platform?: ProjectPlatform;

@@ -182,18 +182,18 @@ export const PROJECTS: ProjectConfig[] = [
     priority: 'high',
   },
   {
-    name: 'OpenClaw',
+    name: 'WatchBot',
     folder: 'claude-code-bot',
     repo: 'openclaw-bot',
-    description: '텔레그램→Claude Code 자율 에이전트 (구 WatchBot)',
+    description: '텔레그램 통합 커맨더 (정지 중 — 재활용 예정)',
     techStack: ['Python', 'python-telegram-bot', 'Claude Agent SDK', 'SQLite'],
-    category: 'running',
+    category: 'stopped',
     platform: 'wsl',
     runCmd: 'cd /mnt/c/vibe/projects/claude-code-bot && python bot.py',
-    phase: '운영 중 — Brain 자율 판단 엔진',
+    phase: '정지 — 통합 커맨더로 재활용 계획',
     completionPct: 83,
-    nextTasks: ['wsl-claude 태스크 실패 조사', 'Brain 라우팅 정확도 모니터링'],
-    priority: 'medium',
+    nextTasks: ['통합 커맨더 기획', 'PM2 모니터링 모듈', 'MC 연동 대시보드'],
+    priority: 'low',
   },
   {
     name: 'Claude Skills',
@@ -287,6 +287,7 @@ export const CATEGORY_LABELS: Record<ProjectConfig['category'], string> = {
   dev: '개발중',
   legacy: '레거시',
   tool: '도구',
+  stopped: '정지',
 };
 
 export const CATEGORY_COLORS: Record<ProjectConfig['category'], string> = {
@@ -294,6 +295,7 @@ export const CATEGORY_COLORS: Record<ProjectConfig['category'], string> = {
   dev: 'bg-blue-500',
   legacy: 'bg-gray-500',
   tool: 'bg-purple-500',
+  stopped: 'bg-red-500',
 };
 
 export const PRIORITY_LABELS: Record<import('@/types').ProjectPriority, string> = {

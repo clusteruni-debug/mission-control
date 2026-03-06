@@ -1,12 +1,12 @@
 // Mission Control — 공통 상태 타입 정의
-// 모든 Phase의 프록시 API, 위젯, OpenClaw 백엔드에서 공유하는 "언어"
+// 모든 Phase의 프록시 API, 위젯에서 공유하는 공통 타입
 
 // --- Enums ---
 
 /** 외부 서비스 연결 상태 */
 export type ServiceStatus = 'online' | 'degraded' | 'offline' | 'unknown';
 
-/** OpenClaw 작업 상태 (Python 백엔드 호환) */
+/** WatchBot 작업 상태 (Python 백엔드 호환) */
 export type TaskStatus =
   | 'queued'
   | 'running'
