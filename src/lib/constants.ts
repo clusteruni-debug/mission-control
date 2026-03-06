@@ -290,9 +290,9 @@ export const PROJECTS: ProjectConfig[] = [
     platform: 'windows',
     runCmd: 'npm run dev',
     port: 3030,
-    phase: 'Scaffold complete — decision capture loop next',
-    completionPct: 18,
-    nextTasks: ['decision create/list/detail 구현', 'review queue 연결', 'Supabase 데이터 레이어 전환'],
+    phase: 'UI scaffold complete — localStorage CRUD working, Supabase sync ready',
+    completionPct: 45,
+    nextTasks: ['Supabase 데이터 레이어 전환', 'AI 인사이트 생성 연동', 'Vercel 배포'],
     priority: 'medium',
   },
 ];
