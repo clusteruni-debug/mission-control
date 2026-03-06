@@ -280,6 +280,21 @@ export const PROJECTS: ProjectConfig[] = [
     nextTasks: ['mc_snapshots 테이블 생성', '스냅샷 수집 스케줄러'],
     priority: 'medium',
   },
+  {
+    name: 'Decision Atlas',
+    folder: 'decision-atlas',
+    repo: 'decision-atlas',
+    description: '개인 의사결정 백테스트 + 판단 품질 분석 앱',
+    techStack: ['Next.js', 'TypeScript', 'Tailwind', 'Supabase'],
+    category: 'dev',
+    platform: 'windows',
+    runCmd: 'npm run dev',
+    port: 3030,
+    phase: 'Scaffold complete — decision capture loop next',
+    completionPct: 18,
+    nextTasks: ['decision create/list/detail 구현', 'review queue 연결', 'Supabase 데이터 레이어 전환'],
+    priority: 'medium',
+  },
 ];
 
 export const CATEGORY_LABELS: Record<ProjectConfig['category'], string> = {
