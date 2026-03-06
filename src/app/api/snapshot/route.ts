@@ -139,7 +139,7 @@ export async function POST(request: NextRequest) {
     const payload = {
       project_stats: buildProjectStats(),
       make_money: makeMoney,
-      openclaw: watchbot,  // DB column name is still 'openclaw' (Supabase migration needed to rename)
+      watchbot,
       events: events,
     };
 

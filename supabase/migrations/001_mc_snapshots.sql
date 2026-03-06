@@ -3,7 +3,7 @@ create table if not exists mc_snapshots (
   created_at timestamptz not null default now(),
   project_stats jsonb not null default '{}'::jsonb,
   make_money jsonb not null default '{}'::jsonb,
-  openclaw jsonb not null default '{}'::jsonb, -- legacy name: stores WatchBot data (not related to OpenClaw Gateway)
+  watchbot jsonb not null default '{}'::jsonb,
   events jsonb not null default '{}'::jsonb
 );
 
