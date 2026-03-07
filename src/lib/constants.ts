@@ -295,6 +295,20 @@ export const PROJECTS: ProjectConfig[] = [
     nextTasks: ['Supabase 데이터 레이어 전환', 'AI 인사이트 생성 연동', 'Vercel 배포'],
     priority: 'medium',
   },
+  {
+    name: 'Random Defense',
+    folder: 'Random-defense-project',
+    repo: 'Random-defense-project',
+    description: '크립토 테마 랜덤 디펜스 브라우저 게임 프로토타입',
+    techStack: ['HTML', 'CSS', 'JavaScript'],
+    category: 'dev',
+    deployUrl: 'https://random-defense-ruddy.vercel.app',
+    platform: 'windows',
+    phase: 'Playable prototype — core loop, 6-tier units, bosses, story missions',
+    completionPct: 35,
+    nextTasks: ['스토리 체인 경계 버그 수정', '파일 분리 (4,754줄 → 모듈)', '밸런스 패스'],
+    priority: 'medium',
+  },
 ];
 
 export const CATEGORY_LABELS: Record<ProjectConfig['category'], string> = {
