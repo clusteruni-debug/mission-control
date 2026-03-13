@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import type { ServiceStatus } from '@/types/status';
-import { PROJECTS } from '@/lib/constants';
+import { getAllProjects } from '@/lib/github';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
 
 type SnapshotRange = '24h' | '7d' | '30d';
@@ -81,8 +81,9 @@ async function fetchJsonOrOffline(
   }
 }
 
-function buildProjectStats() {
-  const counts = PROJECTS.reduce(
+async function buildProjectStats() {
+  const projects = await getAllProjects();
+  const counts = projects.reduce(
     (acc, project) => {
       acc.total += 1;
       acc.byCategory[project.category] = (acc.byCategory[project.category] || 0) + 1;
@@ -137,7 +138,7 @@ export async function POST(request: NextRequest) {
     ]);
 
     const payload = {
-      project_stats: buildProjectStats(),
+      project_stats: await buildProjectStats(),
       make_money: makeMoney,
       watchbot,
       events: events,

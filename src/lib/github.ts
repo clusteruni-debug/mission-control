@@ -7,6 +7,9 @@ const headers: Record<string, string> = {
   Accept: 'application/vnd.github.v3+json',
 };
 
+// Repos that are workspace-level, not projects
+const REPO_BLOCKLIST = new Set(['vibe-coding-workspace']);
+
 // 서버 사이드에서만 토큰 사용
 if (typeof process !== 'undefined' && process.env.GITHUB_TOKEN) {
   headers['Authorization'] = `Bearer ${process.env.GITHUB_TOKEN}`;
@@ -204,6 +207,54 @@ function extractNextTasksFromClaude(content: string): string[] | null {
   return tasks.length > 0 ? tasks : null;
 }
 
+// --- GitHub org auto-discovery ---
+
+interface DiscoveredRepo {
+  name: string;
+  description: string | null;
+  language: string | null;
+}
+
+async function fetchOrgRepos(): Promise<DiscoveredRepo[]> {
+  interface GHRepo {
+    name: string;
+    archived: boolean;
+    fork: boolean;
+    description: string | null;
+    language: string | null;
+  }
+
+  const data = await githubFetch<GHRepo[]>(
+    `/users/${GITHUB_OWNER}/repos?per_page=100&sort=pushed`
+  );
+  if (!data) return [];
+  return data
+    .filter((r) => !r.archived && !r.fork && !REPO_BLOCKLIST.has(r.name))
+    .map((r) => ({ name: r.name, description: r.description, language: r.language }));
+}
+
+/**
+ * Merge static PROJECTS with auto-discovered repos from GitHub org.
+ * Known projects keep their rich metadata; new repos get sensible defaults.
+ */
+export async function getAllProjects(): Promise<ProjectConfig[]> {
+  const orgRepos = await fetchOrgRepos();
+  const knownRepos = new Set(PROJECTS.map((p) => p.repo));
+
+  const discovered: ProjectConfig[] = orgRepos
+    .filter((r) => !knownRepos.has(r.name))
+    .map((r) => ({
+      name: r.name,
+      folder: r.name,
+      repo: r.name,
+      description: r.description || '(auto-discovered)',
+      techStack: r.language ? [r.language] : [],
+      category: 'dev' as const,
+    }));
+
+  return [...PROJECTS, ...discovered];
+}
+
 // --- 메인 스캔 함수 ---
 
 export async function scanProject(
@@ -327,8 +378,9 @@ export async function scanProjectDetail(
 }
 
 export async function scanAllProjects(): Promise<GitHubProjectSnapshot[]> {
+  const allProjects = await getAllProjects();
   const results = await Promise.all(
-    PROJECTS.map((p) => scanProject(p).catch(() => null))
+    allProjects.map((p) => scanProject(p).catch(() => null))
   );
   return results.filter((r): r is GitHubProjectSnapshot => r !== null);
 }
@@ -337,8 +389,9 @@ export async function scanAllProjects(): Promise<GitHubProjectSnapshot[]> {
 export async function fetchUnifiedFeed(
   count: number = 30
 ): Promise<(GitHubCommit & { project: string; repo: string })[]> {
+  const allProjects = await getAllProjects();
   const allCommits = await Promise.all(
-    PROJECTS.map(async (p) => {
+    allProjects.map(async (p) => {
       const commits = await fetchCommits(p.repo, 10);
       return commits.map((c) => ({ ...c, project: p.name, repo: p.repo }));
     })

@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { PROJECTS } from '@/lib/constants';
-import { scanProjectDetail } from '@/lib/github';
+import { getAllProjects, scanProjectDetail } from '@/lib/github';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,7 +8,8 @@ export async function GET(
   { params }: { params: Promise<{ folder: string }> }
 ) {
   const { folder } = await params;
-  const project = PROJECTS.find((p) => p.folder === folder);
+  const allProjects = await getAllProjects();
+  const project = allProjects.find((p) => p.folder === folder);
 
   if (!project) {
     return NextResponse.json(

@@ -3,7 +3,7 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import { isControlAuthorized } from '@/lib/auth';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
-import { PROJECTS } from '@/lib/constants';
+import { getAllProjects } from '@/lib/github';
 import type { NextRequest } from 'next/server';
 
 const execAsync = promisify(exec);
@@ -84,7 +84,8 @@ export async function POST(request: NextRequest) {
       };
 
       // Check a subset of important projects
-      const checkProjects = PROJECTS.filter((p) =>
+      const allProjects = await getAllProjects();
+      const checkProjects = allProjects.filter((p) =>
         ['running', 'dev', 'tool'].includes(p.category)
       ).slice(0, 10);
 

@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { scanAllProjects, fetchUnifiedFeed } from '@/lib/github';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
-import { PROJECTS } from '@/lib/constants';
 import type { GitHubProjectSnapshot } from '@/lib/github';
 
 export const dynamic = 'force-dynamic';
@@ -31,7 +30,7 @@ function buildMarkdown(
   // §1 워크스페이스 개요
   lines.push('## §1 워크스페이스 개요');
   lines.push(
-    `- 환경: Windows 데스크탑 + WSL (SSH 원격 접속), 프로젝트 ${PROJECTS.length}개`
+    `- 환경: Windows 데스크탑 + WSL (SSH 원격 접속), 프로젝트 ${snapshots.length}개`
   );
   lines.push(
     '- 워크플로우: Claude.ai(설계) → Codex(실행) → Claude Code(검수)'
