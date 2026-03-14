@@ -106,7 +106,7 @@
     },
     "Saitama-training": {
       "description": "사이타마 트레이닝 추적",
-      "deployUrl": "https://clusteruni-debug.github.io/Saitama-training/",
+      "deployUrl": "https://saitama-training.vercel.app",
       "priority": "low",
       "completionPct": 88,
       "phase": "P0~P2 완료 — PWA 운영",

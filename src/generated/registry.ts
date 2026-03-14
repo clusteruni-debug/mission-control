@@ -285,7 +285,7 @@ export const PROJECTS: ProjectConfig[] = [
       "zustand"
     ],
     "category": "running",
-    "deployUrl": "https://clusteruni-debug.github.io/Saitama-training/",
+    "deployUrl": "https://saitama-training.vercel.app",
     "platform": "windows",
     "runCmd": "npx vite --port 5130",
     "port": 5130,
