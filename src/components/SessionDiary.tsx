@@ -7,14 +7,19 @@ import type { DiaryDay, DiaryResult } from '@/types/diary';
 export function SessionDiary() {
   const [days, setDays] = useState<DiaryDay[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    fetch('/api/diary')
+    const controller = new AbortController();
+    fetch('/api/diary', { signal: controller.signal })
       .then((res) => res.json())
       .then((data: DiaryResult) => setDays(Array.isArray(data?.days) ? data.days : []))
-      .catch(() => {})
+      .catch((e) => {
+        if (e?.name !== 'AbortError') setError(true);
+      })
       .finally(() => setLoading(false));
+    return () => controller.abort();
   }, []);
 
   const toggle = (date: string) => {
@@ -31,6 +36,14 @@ export function SessionDiary() {
       <div className="flex items-center justify-center py-8">
         <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
       </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <p className="py-4 text-center text-sm text-red-400">
+        다이어리를 불러오지 못했습니다
+      </p>
     );
   }
 

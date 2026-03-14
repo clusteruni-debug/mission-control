@@ -2,11 +2,10 @@ import { NextResponse } from 'next/server';
 import { GITHUB_OWNER } from '@/lib/constants';
 import type { DiarySession, DiaryDay } from '@/types/diary';
 
-export const dynamic = 'force-dynamic';
-
 const WORKSPACE_REPO = 'vibe-coding-workspace';
 const GITHUB_API = 'https://api.github.com';
 const MAX_DAYS = 14;
+const REVALIDATE = 300; // 5-minute cache
 
 const headers: Record<string, string> = {
   Accept: 'application/vnd.github.v3+json',
@@ -22,7 +21,7 @@ const SESSION_HEADER = /^### Session (\S+)\s*(?:\(([^,]+),\s*([^)]+)\))?/;
 const PROJECT_RE = /\*\*(?:Project|프로젝트)\*\*:\s*(.+)/;
 const TASK_RE = /\*\*(?:Task|작업)\*\*:\s*(.+)/;
 const RESULT_BULLET_RE = /\*\*(?:Result|결과)\*\*:\s*\n((?:\s*- .+\n?){1,3})/;
-const RESULT_INLINE_RE = /\*\*(?:Result|결과)\*\*:\s*(.+)/;
+const RESULT_INLINE_RE = /\*\*(?:Result|결과)\*\*:[ \t]*(.+)/;
 const NEXT_RE = /\*\*(?:Next|다음)\*\*:\s*(.+)/;
 const MONITORING_RE = /monitor|monitoring|awaiting|deploy|redeploy|verify|confirm|배포|확인/i;
 
@@ -88,10 +87,11 @@ async function fetchFileContent(path: string): Promise<string | null> {
   try {
     const res = await fetch(
       `${GITHUB_API}/repos/${GITHUB_OWNER}/${WORKSPACE_REPO}/contents/${path}`,
-      { headers }
+      { headers, next: { revalidate: REVALIDATE } }
     );
     if (!res.ok) return null;
     const data = await res.json();
+    if (!data?.content) return null;
     return Buffer.from(data.content, 'base64').toString('utf-8');
   } catch {
     return null;
@@ -103,14 +103,18 @@ export async function GET() {
     // List diary directory
     const dirRes = await fetch(
       `${GITHUB_API}/repos/${GITHUB_OWNER}/${WORKSPACE_REPO}/contents/memory/diary`,
-      { headers }
+      { headers, next: { revalidate: REVALIDATE } }
     );
 
     if (!dirRes.ok) {
       return NextResponse.json({ days: [], scannedAt: new Date().toISOString() });
     }
 
-    const files: { name: string; type: string }[] = await dirRes.json();
+    const dirData = await dirRes.json();
+    if (!Array.isArray(dirData)) {
+      return NextResponse.json({ days: [], scannedAt: new Date().toISOString() });
+    }
+    const files: { name: string; type: string }[] = dirData;
     const mdFiles = files
       .filter((f) => f.type === 'file' && f.name.endsWith('.md'))
       .map((f) => f.name)
