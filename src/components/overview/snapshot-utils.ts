@@ -3,8 +3,12 @@ import type { SnapshotRow, TrendPoint } from './types';
 export function extractBalanceSeries(rows: SnapshotRow[]): TrendPoint[] {
   const points: TrendPoint[] = [];
   for (const row of rows) {
-    const mm = row.make_money as { data?: { balance?: number }; balance?: number } | null;
-    const balance = mm?.data?.balance ?? mm?.balance;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const mm = row.make_money as any;
+    // New nested format: mm.portfolio.data.balance
+    // Legacy flat format: mm.data.balance or mm.balance
+    const balance =
+      mm?.portfolio?.data?.balance ?? mm?.data?.balance ?? mm?.balance;
     if (typeof balance === 'number') {
       points.push({ timestamp: row.created_at, value: balance });
     }
@@ -15,9 +19,12 @@ export function extractBalanceSeries(rows: SnapshotRow[]): TrendPoint[] {
 export function extractParticipationSeries(rows: SnapshotRow[]): TrendPoint[] {
   const points: TrendPoint[] = [];
   for (const row of rows) {
-    const ev = row.events as { data?: { total?: number; participated?: number } } | null;
-    const total = ev?.data?.total;
-    const participated = ev?.data?.participated;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const ev = row.events as any;
+    // New nested format: ev.stats.data.{total,participated}
+    // Legacy flat format: ev.data.{total,participated}
+    const total = ev?.stats?.data?.total ?? ev?.data?.total;
+    const participated = ev?.stats?.data?.participated ?? ev?.data?.participated;
     if (typeof total === 'number' && total > 0 && typeof participated === 'number') {
       points.push({
         timestamp: row.created_at,

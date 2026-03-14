@@ -1,18 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import type { ServiceStatus } from '@/types/status';
+import type { SnapshotRow } from '@/components/overview/types';
 import { getAllProjects } from '@/lib/github';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
 
 type SnapshotRange = '24h' | '7d' | '30d';
-
-type SnapshotRow = {
-  id: number;
-  created_at: string;
-  project_stats: Record<string, unknown>;
-  make_money: Record<string, unknown>;
-  watchbot: Record<string, unknown>;
-  events: Record<string, unknown>;
-};
 
 type ProxyResponse<T> = {
   data: T | null;
@@ -127,21 +119,39 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // Block snapshot collection on Vercel — proxied APIs can't reach localhost,
+  // so the snapshot would just recycle stale data from its own fallback path.
+  if (process.env.VERCEL) {
+    return NextResponse.json(
+      makeResponse(null, 'offline', Date.now() - start, 'Snapshot collection disabled on Vercel — run from localhost'),
+      { status: 400 }
+    );
+  }
+
   try {
     const supabase = getSupabaseAdmin();
     const origin = request.nextUrl.origin;
 
-    const [makeMoney, watchbot, events] = await Promise.all([
-      fetchJsonOrOffline(`${origin}/api/make-money?path=portfolio`, 'make-money'),
+    const [
+      mmHealth, mmPortfolio, mmEngines, mmTrades,
+      watchbot,
+      tgStats, tgHealth, tgAnalyzed,
+    ] = await Promise.all([
+      fetchJsonOrOffline(`${origin}/api/make-money?path=health`, 'mm-health'),
+      fetchJsonOrOffline(`${origin}/api/make-money?path=portfolio`, 'mm-portfolio'),
+      fetchJsonOrOffline(`${origin}/api/make-money?path=engines`, 'mm-engines'),
+      fetchJsonOrOffline(`${origin}/api/make-money?path=trades`, 'mm-trades'),
       fetchJsonOrOffline(`${origin}/api/bot-status`, 'watchbot'),
-      fetchJsonOrOffline(`${origin}/api/telegram-bot?path=stats`, 'telegram'),
+      fetchJsonOrOffline(`${origin}/api/telegram-bot?path=stats`, 'tg-stats'),
+      fetchJsonOrOffline(`${origin}/api/telegram-bot?path=health`, 'tg-health'),
+      fetchJsonOrOffline(`${origin}/api/telegram-bot?path=analyzed`, 'tg-analyzed'),
     ]);
 
     const payload = {
       project_stats: await buildProjectStats(),
-      make_money: makeMoney,
+      make_money: { health: mmHealth, portfolio: mmPortfolio, engines: mmEngines, trades: mmTrades },
       watchbot,
-      events: events,
+      events: { stats: tgStats, health: tgHealth, analyzed: tgAnalyzed },
     };
 
     const { data, error } = await supabase

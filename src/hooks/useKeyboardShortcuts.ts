@@ -12,9 +12,9 @@ const TAB_BY_KEY: Record<string, string> = {
   '1': 'overview',
   '2': 'projects',
   '3': 'monitoring',
-  '4': 'services',
-  '5': 'operations',
-  '6': 'activity',
+  '4': 'operations',
+  '5': 'activity',
+  '6': 'doc-health',
 };
 
 function isTypingTarget(target: EventTarget | null): boolean {

@@ -34,8 +34,9 @@ export interface TrendPoint {
 
 export interface SnapshotRow {
   created_at: string;
-  make_money: Record<string, unknown>;
-  events: Record<string, unknown>;
+  make_money: Record<string, unknown> | null;
+  watchbot: Record<string, unknown> | null;
+  events: Record<string, unknown> | null;
   project_stats: Record<string, unknown>;
 }
 

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { getLatestSnapshot } from '@/lib/snapshot-fallback';
 
 export const revalidate = 300; // 5분 캐시
 
@@ -23,6 +24,29 @@ export interface BotHealthResponse {
 }
 
 export async function GET() {
+  // On Vercel, proxy can't reach WSL localhost — fall back to snapshot
+  if (process.env.VERCEL) {
+    const snapshot = await getLatestSnapshot();
+    if (!snapshot?.watchbot) {
+      return NextResponse.json({
+        status: 'offline',
+        recent_tasks: [],
+        success_rate: 0,
+        last_run: null,
+        scheduled: [],
+        uptime: 0,
+        error: '스냅샷 데이터 없음',
+      });
+    }
+
+    return NextResponse.json({
+      ...snapshot.watchbot,
+      _fromSnapshot: true,
+      _snapshotAt: snapshot.created_at,
+    });
+  }
+
+  // Local: proxy to WatchBot
   const healthUrl =
     process.env.WATCHBOT_HEALTH_URL || 'http://localhost:7100/health';
 
@@ -43,7 +67,6 @@ export async function GET() {
     const data: BotHealthResponse = await res.json();
     return NextResponse.json({ status: 'online', ...data });
   } catch {
-    // WSL 환경 아닐 때 or Watch Bot 미실행 시 graceful fallback
     return NextResponse.json({
       status: 'offline',
       recent_tasks: [],

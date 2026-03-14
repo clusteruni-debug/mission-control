@@ -158,9 +158,10 @@
     },
     "care-memory": {
       "description": "관계 돌봄 기록 앱 — 소중한 사람과의 연결 관리",
+      "deployUrl": "https://care-memory.vercel.app",
       "priority": "medium",
       "completionPct": 30,
-      "phase": "MVP shell — localStorage, 한국어 UI",
+      "phase": "MVP — IndexedDB persistence, 한국어 UI",
       "runCmd": "npm run dev"
     },
     "openclaw-bot": {

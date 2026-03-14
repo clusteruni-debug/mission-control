@@ -408,10 +408,11 @@ export const PROJECTS: ProjectConfig[] = [
       "Tailwind v4"
     ],
     "category": "running",
+    "deployUrl": "https://care-memory.vercel.app",
     "platform": "windows",
     "runCmd": "npm run dev",
     "port": 3050,
-    "phase": "MVP shell — localStorage, 한국어 UI",
+    "phase": "MVP — IndexedDB persistence, 한국어 UI",
     "completionPct": 30,
     "priority": "medium"
   },

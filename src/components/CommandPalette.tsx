@@ -9,7 +9,6 @@ import {
   Bot,
   Wallet,
   Activity,
-  Server,
   AlertTriangle,
 } from 'lucide-react';
 
@@ -43,7 +42,6 @@ export function CommandPalette({
       { id: 'tab-projects', title: '프로젝트로 이동', icon: LayoutDashboard, execute: () => onNavigate('projects') },
       { id: 'tab-monitoring', title: '모니터링으로 이동', icon: Activity, execute: () => onNavigate('monitoring') },
       { id: 'tab-activity', title: '활동으로 이동', icon: Activity, execute: () => onNavigate('activity') },
-      { id: 'tab-services', title: '서비스 제어로 이동', icon: Server, execute: () => onNavigate('services') },
       { id: 'tab-operations', title: '운영으로 이동', icon: Bot, execute: () => onNavigate('operations') },
       { id: 'quick-incidents', title: '인시던트 보드로 이동', hint: '운영', icon: AlertTriangle, execute: () => onNavigate('operations') },
       { id: 'quick-balance', title: 'Make Money 잔고 조회', hint: '빠른 조회', icon: Wallet, execute: () => onAction('quick_make_money_balance') },

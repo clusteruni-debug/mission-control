@@ -50,7 +50,7 @@ export interface ProxyResponse<T> {
  * - fetch 실패 / timeout → offline (에러 메시지 포함)
  */
 export async function createProxyResponse<T>(
-  fetchFn: () => Promise<Response>,
+  fetchFn: (signal: AbortSignal) => Promise<Response>,
   timeoutMs: number = 5000
 ): Promise<ProxyResponse<T>> {
   const fetchedAt = new Date().toISOString();
@@ -60,10 +60,10 @@ export async function createProxyResponse<T>(
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
-    const res = await fetchFn().then((r) => {
-      clearTimeout(timeout);
-      return r;
-    });
+    const res = await fetchFn(controller.signal).then(
+      (r) => { clearTimeout(timeout); return r; },
+      (err) => { clearTimeout(timeout); throw err; },
+    );
 
     const responseTimeMs = Date.now() - start;
 

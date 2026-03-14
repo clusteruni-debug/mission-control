@@ -4,7 +4,6 @@ export type TabView =
   | 'overview'
   | 'projects'
   | 'monitoring'
-  | 'services'
   | 'operations'
   | 'activity'
   | 'doc-health';
@@ -21,7 +20,6 @@ export const TABS: { label: string; value: TabView }[] = [
   { label: 'Overview', value: 'overview' },
   { label: '프로젝트', value: 'projects' },
   { label: '모니터링', value: 'monitoring' },
-  { label: '서비스', value: 'services' },
   { label: '운영', value: 'operations' },
   { label: '활동', value: 'activity' },
   { label: 'Doc Health', value: 'doc-health' },

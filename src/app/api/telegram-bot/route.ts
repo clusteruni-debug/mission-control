@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
     }
 
     const result = await createProxyResponse(
-      () => fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getMe`),
+      (signal) => fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getMe`, { signal }),
       5000
     );
 
@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
   }
 
   const result = await createProxyResponse(
-    () => fetch(`${BASE_URL}${toApiPath(path)}`),
+    (signal) => fetch(`${BASE_URL}${toApiPath(path)}`, { signal }),
     5000
   );
 
