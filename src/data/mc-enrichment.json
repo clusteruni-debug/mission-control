@@ -43,15 +43,19 @@
     },
     "decision-atlas": {
       "description": "개인 의사결정 백테스트 + 판단 품질 분석 앱",
+      "deployUrl": "https://decision-atlas.vercel.app",
       "categoryOverride": "dev",
       "priority": "medium",
       "completionPct": 45,
+      "phase": "UI scaffold — localStorage CRUD, Supabase sync 준비",
       "runCmd": "npm run dev"
     },
     "thread-desk": {
       "description": "AI 스레드 관리 + OpenClaw 워커 연동",
+      "deployUrl": "https://thread-desk.vercel.app",
       "priority": "medium",
       "completionPct": 60,
+      "phase": "Supabase durable storage + Vercel 배포 완료",
       "runCmd": "npm run dev"
     },
     "To-do-list-for-adhd": {
@@ -63,6 +67,7 @@
       ],
       "priority": "medium",
       "completionPct": 85,
+      "phase": "운영 중 — 지속적 UX 개선",
       "runCmd": "npx serve -p 5000"
     },
     "telegram-event-bot": {
@@ -74,6 +79,7 @@
       ],
       "priority": "maintenance",
       "completionPct": 82,
+      "phase": "운영 중 — 분류 고도화 + 하이퍼링크 파싱",
       "runCmd": "systemctl --user status telegram-event-bot"
     },
     "Kimpbotforme": {
@@ -103,6 +109,7 @@
       "deployUrl": "https://clusteruni-debug.github.io/Saitama-training/",
       "priority": "low",
       "completionPct": 88,
+      "phase": "P0~P2 완료 — PWA 운영",
       "runCmd": "npx vite --port 5130"
     },
     "web3-budget-app": {
@@ -132,19 +139,22 @@
       ],
       "categoryOverride": "tool",
       "priority": "medium",
-      "completionPct": 55
+      "completionPct": 55,
+      "phase": "초기 개발 — Grok/AskSurf 추가, 실테스트 대기"
     },
     "coin-test-project": {
       "description": "크립토 트레이딩 실험실",
       "priority": "medium",
       "completionPct": 65,
+      "phase": "ML Signal + 72h dry-run 검증 중",
       "runCmd": "python -m tradinglab dashboard"
     },
     "Random-defense-project": {
       "description": "크립토 테마 랜덤 디펜스 브라우저 게임 프로토타입",
       "deployUrl": "https://random-defense-ruddy.vercel.app",
       "priority": "medium",
-      "completionPct": 35
+      "completionPct": 35,
+      "phase": "Playable prototype — core loop, 6-tier units, bosses"
     },
     "openclaw-bot": {
       "description": "텔레그램 통합 커맨더",

@@ -71,6 +71,7 @@ for (const [key, entry] of Object.entries(registry)) {
 
   if (enrich.runCmd) project.runCmd = enrich.runCmd;
   if (primaryRow.port) project.port = primaryRow.port;
+  if (enrich.phase) project.phase = enrich.phase;
   if (enrich.completionPct != null) project.completionPct = enrich.completionPct;
   if (enrich.priority) project.priority = enrich.priority;
 

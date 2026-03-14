@@ -126,9 +126,11 @@ export const PROJECTS: ProjectConfig[] = [
       "Tailwind v4"
     ],
     "category": "dev",
+    "deployUrl": "https://decision-atlas.vercel.app",
     "platform": "windows",
     "runCmd": "npm run dev",
     "port": 3030,
+    "phase": "UI scaffold — localStorage CRUD, Supabase sync 준비",
     "completionPct": 45,
     "priority": "medium"
   },
@@ -144,9 +146,11 @@ export const PROJECTS: ProjectConfig[] = [
       "Supabase"
     ],
     "category": "running",
+    "deployUrl": "https://thread-desk.vercel.app",
     "platform": "both",
     "runCmd": "npm run dev",
     "port": 3040,
+    "phase": "Supabase durable storage + Vercel 배포 완료",
     "completionPct": 60,
     "priority": "medium"
   },
@@ -176,6 +180,7 @@ export const PROJECTS: ProjectConfig[] = [
     "platform": "windows",
     "runCmd": "npx serve -p 5000",
     "port": 5000,
+    "phase": "운영 중 — 지속적 UX 개선",
     "completionPct": 85,
     "priority": "medium"
   },
@@ -204,6 +209,7 @@ export const PROJECTS: ProjectConfig[] = [
     ],
     "platform": "wsl",
     "runCmd": "systemctl --user status telegram-event-bot",
+    "phase": "운영 중 — 분류 고도화 + 하이퍼링크 파싱",
     "completionPct": 82,
     "priority": "maintenance"
   },
@@ -283,6 +289,7 @@ export const PROJECTS: ProjectConfig[] = [
     "platform": "windows",
     "runCmd": "npx vite --port 5130",
     "port": 5130,
+    "phase": "P0~P2 완료 — PWA 운영",
     "completionPct": 88,
     "priority": "low"
   },
@@ -352,6 +359,7 @@ export const PROJECTS: ProjectConfig[] = [
       }
     ],
     "platform": "windows",
+    "phase": "초기 개발 — Grok/AskSurf 추가, 실테스트 대기",
     "completionPct": 55,
     "priority": "medium"
   },
@@ -369,6 +377,7 @@ export const PROJECTS: ProjectConfig[] = [
     "platform": "windows",
     "runCmd": "python -m tradinglab dashboard",
     "port": 8787,
+    "phase": "ML Signal + 72h dry-run 검증 중",
     "completionPct": 65,
     "priority": "medium"
   },
@@ -384,6 +393,7 @@ export const PROJECTS: ProjectConfig[] = [
     "category": "running",
     "deployUrl": "https://random-defense-ruddy.vercel.app",
     "platform": "windows",
+    "phase": "Playable prototype — core loop, 6-tier units, bosses",
     "completionPct": 35,
     "priority": "medium"
   },
