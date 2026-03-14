@@ -2,18 +2,38 @@ name: Cron Snapshot
 
 on:
   schedule:
-    # GitHub Actions minimum interval: 5 minutes (but actual delivery can lag ~1-2 min)
+    # GitHub Actions minimum interval: 5 minutes (actual delivery can lag ~1-2 min)
     - cron: '*/5 * * * *'
   workflow_dispatch: # manual trigger for testing
+
+concurrency:
+  group: cron-snapshot
+  cancel-in-progress: true
 
 jobs:
   snapshot:
     runs-on: ubuntu-latest
     timeout-minutes: 1
     steps:
+      - name: Preflight — verify secrets
+        run: |
+          if [ -z "$CRON_SECRET" ] || [ -z "$VERCEL_PROD_URL" ]; then
+            echo "::error::Missing required secrets (CRON_SECRET or VERCEL_PROD_URL)"
+            exit 1
+          fi
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          VERCEL_PROD_URL: ${{ secrets.VERCEL_PROD_URL }}
+
       - name: Call snapshot endpoint
         run: |
-          curl -sf -X GET \
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+            --connect-timeout 10 --max-time 30 \
+            -X GET \
             -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
-            "${{ secrets.VERCEL_PROD_URL }}/api/cron/snapshot" \
-            -o /dev/null -w "HTTP %{http_code}\n"
+            "${{ secrets.VERCEL_PROD_URL }}/api/cron/snapshot")
+          echo "HTTP ${HTTP_CODE}"
+          if [ "$HTTP_CODE" -lt 200 ] || [ "$HTTP_CODE" -ge 300 ]; then
+            echo "::error::Snapshot endpoint returned HTTP ${HTTP_CODE}"
+            exit 1
+          fi

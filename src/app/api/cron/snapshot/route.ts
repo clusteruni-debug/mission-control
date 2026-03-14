@@ -2,14 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
-function isVercelCron(request: NextRequest): boolean {
+function isCronAuthorized(request: NextRequest): boolean {
   const cronSecret = process.env.CRON_SECRET;
   if (!cronSecret) return false;
   return request.headers.get('authorization') === `Bearer ${cronSecret}`;
 }
 
 export async function GET(request: NextRequest) {
-  if (!isVercelCron(request)) {
+  if (!isCronAuthorized(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -29,6 +29,7 @@ export async function GET(request: NextRequest) {
       headers: {
         Authorization: `Bearer ${secret}`,
       },
+      signal: AbortSignal.timeout(30_000),
     });
 
     const data = await res.json().catch(() => ({
