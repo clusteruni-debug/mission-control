@@ -573,7 +573,7 @@ export const SERVICE_REGISTRY: ServiceRegistryEntry[] = [
     "runtime": "pm2",
     "category": "paper-trading",
     "projectFolder": "coin-test-project",
-    "autorestart": false,
+    "autorestart": true,
     "protected": false
   },
   {
@@ -581,7 +581,7 @@ export const SERVICE_REGISTRY: ServiceRegistryEntry[] = [
     "runtime": "pm2",
     "category": "paper-trading",
     "projectFolder": "coin-test-project",
-    "autorestart": false,
+    "autorestart": true,
     "protected": false
   },
   {
@@ -589,7 +589,7 @@ export const SERVICE_REGISTRY: ServiceRegistryEntry[] = [
     "runtime": "pm2",
     "category": "paper-trading",
     "projectFolder": "coin-test-project",
-    "autorestart": false,
+    "autorestart": true,
     "protected": false
   },
   {

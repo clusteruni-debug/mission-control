@@ -167,9 +167,9 @@
     "make-money": { "category": "always-on", "autorestart": true, "protected": true },
     "kimchi-bot": { "category": "always-on", "autorestart": true },
     "tradinglab": { "category": "always-on", "autorestart": true },
-    "tradinglab-paper-day": { "category": "paper-trading" },
-    "tradinglab-paper-swing": { "category": "paper-trading" },
-    "tradinglab-dryrun": { "category": "paper-trading" },
+    "tradinglab-paper-day": { "category": "paper-trading", "autorestart": true },
+    "tradinglab-paper-swing": { "category": "paper-trading", "autorestart": true },
+    "tradinglab-dryrun": { "category": "paper-trading", "autorestart": true },
     "telegram-event-bot": { "category": "wsl", "autorestart": true }
   },
   "extraServices": [
