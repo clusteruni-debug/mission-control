@@ -11,6 +11,7 @@ import { MakeMoneyWidget } from '../MakeMoneyWidget';
 import { EventWidget } from '../EventWidget';
 import { Overview } from '../Overview';
 import { DocHealth } from '../DocHealth';
+import { SessionDiary } from '../SessionDiary';
 import { ServiceControlPanel } from '../ServiceControlPanel';
 import { IncidentBoard } from '../IncidentBoard';
 import { DependencyImpact } from '../DependencyImpact';
@@ -116,6 +117,12 @@ export function TabContent({
               생산성 통계
             </h2>
             <ProductivityStats snapshots={snapshots} />
+          </div>
+          <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
+            <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+              세션 다이어리
+            </h2>
+            <SessionDiary />
           </div>
           <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
             <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">

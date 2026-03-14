@@ -222,14 +222,21 @@ async function fetchOrgRepos(): Promise<DiscoveredRepo[]> {
     fork: boolean;
     description: string | null;
     language: string | null;
+    owner: { login: string };
   }
 
-  const data = await githubFetch<GHRepo[]>(
-    `/users/${GITHUB_OWNER}/repos?per_page=100&sort=pushed`
-  );
+  // Use /user/repos (authenticated) to include private repos;
+  // fall back to /users/{owner}/repos (public-only) when no token.
+  const hasToken = !!headers['Authorization'];
+  const endpoint = hasToken
+    ? `/user/repos?per_page=100&sort=pushed&affiliation=owner`
+    : `/users/${GITHUB_OWNER}/repos?per_page=100&sort=pushed`;
+
+  const data = await githubFetch<GHRepo[]>(endpoint);
   if (!data) return [];
   return data
-    .filter((r) => !r.archived && !r.fork && !REPO_BLOCKLIST.has(r.name))
+    .filter((r) => !r.archived && !r.fork && !REPO_BLOCKLIST.has(r.name)
+      && (!hasToken || r.owner.login === GITHUB_OWNER))
     .map((r) => ({ name: r.name, description: r.description, language: r.language }));
 }
 
