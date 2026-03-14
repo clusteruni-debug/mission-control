@@ -1,0 +1,19 @@
+name: Cron Snapshot
+
+on:
+  schedule:
+    # GitHub Actions minimum interval: 5 minutes (but actual delivery can lag ~1-2 min)
+    - cron: '*/5 * * * *'
+  workflow_dispatch: # manual trigger for testing
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    steps:
+      - name: Call snapshot endpoint
+        run: |
+          curl -sf -X GET \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "${{ secrets.VERCEL_PROD_URL }}/api/cron/snapshot" \
+            -o /dev/null -w "HTTP %{http_code}\n"
