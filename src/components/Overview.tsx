@@ -121,10 +121,10 @@ export function Overview({ snapshots, onNavigate }: OverviewProps) {
   // --- 프로젝트 통계 ---
 
   const running = snapshots.filter(
-    (s) => s.project.category === 'running'
+    (s) => (s.runtimeCategory ?? s.project.category) === 'running'
   ).length;
   const dev = snapshots.filter(
-    (s) => s.project.category === 'dev'
+    (s) => (s.runtimeCategory ?? s.project.category) === 'dev'
   ).length;
   const todayStr = new Date().toISOString().slice(0, 10);
   const todayCommits = snapshots.reduce(
@@ -229,7 +229,7 @@ export function Overview({ snapshots, onNavigate }: OverviewProps) {
 
       <TimelineSection timeline={timeline} loading={timelineLoading} />
 
-      <RoadmapSection />
+      <RoadmapSection snapshots={snapshots} />
     </div>
   );
 }

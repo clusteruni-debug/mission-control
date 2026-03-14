@@ -1,4 +1,4 @@
-export type FilterCategory = 'all' | 'running' | 'dev' | 'legacy' | 'tool';
+export type FilterCategory = 'all' | 'running' | 'dev' | 'tool' | 'stopped';
 
 export type TabView =
   | 'overview'
@@ -15,6 +15,7 @@ export const FILTERS: { label: string; value: FilterCategory }[] = [
   { label: '운영중', value: 'running' },
   { label: '개발중', value: 'dev' },
   { label: '도구', value: 'tool' },
+  { label: '정지', value: 'stopped' },
 ];
 
 export const TABS: { label: string; value: TabView }[] = [

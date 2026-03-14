@@ -72,7 +72,7 @@ export function StatsBar({ snapshots }: StatsBarProps) {
     (s) => s.git.daysSinceCommit !== null && s.git.daysSinceCommit >= 7
   ).length;
   const runningProjects = snapshots.filter(
-    (s) => s.project.category === 'running'
+    (s) => (s.runtimeCategory ?? s.project.category) === 'running'
   ).length;
 
   const pnlStatus: ServiceStatus = pnlRes?.status ?? 'unknown';

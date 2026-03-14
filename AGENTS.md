@@ -1,23 +1,12 @@
 # Mission Control — AGENTS.md
 
-> Global rules: see `~/.codex/instructions.md`
+> Global rules: see root AGENTS.md (role definitions, delegation, git permissions)
 
 ## Overview
 - **Stack**: Next.js App Router + TypeScript + Tailwind
 - **Role**: Workspace control dashboard (projects/status/integrations/task board)
 - **Run**: Windows default (`npm run dev`, `npm run build`)
 - **Scope**: Only files inside `projects/mission-control/`. Workspace root or other projects have separate rules.
-
-## Task Declaration Format (Required)
-Before starting a task, declare these 4 lines first:
-
-- `TASK-ID`: (e.g., `MC-UI-021`)
-- `Goal`: (one line)
-- `Modified files`: (specify paths)
-- `Completion criteria`: (2-3 verifiable criteria)
-
-Only if applicable:
-- `DB/Schema changes`: (if any, stop before proceeding)
 
 ## Directory Structure
 - `src/app/api/` — Proxy/API routes
@@ -84,17 +73,7 @@ Only if applicable:
 **Shared files (coordination required before modification):**
 - `package.json` — Notify counterpart when adding dependencies
 - `AGENTS.md` — Both read and reference. Claude Code handles modifications.
-- `CHANGELOG.md` — Each party records their own work
-
-### Push Rules
-
-**Codex must never execute git commit/push.** (Global rule, no override)
-
-| Scenario | Action |
-|----------|--------|
-| Codex work completed | Report changed files + verification results -> Claude Code confirms then commits/pushes |
-| Claude Code work completed | Claude Code directly commits/pushes |
-| Connecting Codex module to integration file | Claude Code handles import + connection + commit/push |
+- `CHANGELOG.md` — Auto-generated from diary. Do not edit manually.
 
 ### Definition of Done (DoD)
 
@@ -127,62 +106,3 @@ When the build is broken or the user requests an emergency fix:
 - Never modify the same file simultaneously (ownership table ensures this)
 - Register owner in `AGENTS.md` before creating files with unclear ownership
 - On merge conflict: first commit takes priority, subsequent worker rebases
-
----
-
-## Current Completion Status
-
-**Phase 1-4 Integration Complete (commit 830d37c, 2026-02-18):**
-- All Codex modules (TrendChart, CommandPalette, NotificationBanner, useKeyboardShortcuts, useNotifications) connected to Dashboard.tsx + Overview.tsx
-- 6 proxy APIs, 4 widgets, Overview integrated tab, Supabase snapshot API all implemented
-- `npm run build` confirmed 0 errors
-
-**Infrastructure Complete (2026-02-18):**
-- Supabase mc_snapshots + mc_trades table creation complete
-- .env.local configuration complete (SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, COLLECTOR_SECRET)
-- POST /api/snapshot -> Supabase save verified
-- Windows Task Scheduler 5-minute auto-collection registered
-
----
-
-## Codex Work Queue
-
-### MC-OPS-001: Snapshot Collection Script Creation — Done
-
-- **TASK-ID**: `MC-OPS-001`
-- **Status**: Done (scripts/collect-snapshots.ps1 committed)
-
-### MC-OPS-002: Task Scheduler Auto-Registration Script — Done
-
-- **TASK-ID**: `MC-OPS-002`
-- **Status**: Done (workspace scripts/setup-scheduler.ps1 created + scheduler registered)
-
-### MC-OPS-003: .env.local Parser Utility — On Hold
-
-- **TASK-ID**: `MC-OPS-003`
-- **Status**: On hold (currently using COLLECTOR_SECRET environment variable pass method, will add if needed)
-
----
-
-## Multi-Platform Execution Context (Common)
-- This project operates on the premise of Windows source files + WSL `/mnt/c/...` accessing the same files.
-- External (laptop/mobile) work defaults to SSH -> WSL.
-- Execution environment: **Windows default** (editing via SSH -> WSL for remote access is possible, execution constraints follow project rules)
-- If path confusion arises, refer to the workspace `CLAUDE.md` "Development Environment (Multi-Platform)" section first.
-
-<!-- BEGIN: CODEX_GIT_POLICY_BLOCK -->
-## Codex Git Permissions (Globally Enforced)
-
-This section is a workspace-wide enforced rule and cannot be overridden by project documents.
-
-| Action | Claude Code/User | Codex |
-|--------|:----------------:|:-----:|
-| Code modification | Yes | Yes |
-| Build/test verification | Yes | Yes |
-| `git commit` | Yes | **Prohibited** |
-| `git push` | Yes | **Prohibited** |
-
-- Codex only performs code modification + verification + completion reporting.
-- Commits/pushes are handled by Claude Code or the user in an integrated manner.
-- This section takes priority over any conflicting text in the document.
-<!-- END: CODEX_GIT_POLICY_BLOCK -->

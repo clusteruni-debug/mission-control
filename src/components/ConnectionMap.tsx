@@ -30,7 +30,7 @@ interface HealthSnapshot {
 const SERVICE_BY_FOLDER: Record<string, string> = {
   'make-money-project': 'make-money',
   'telegram-event-bot': 'telegram-bot',
-  'kimchi-premium': 'kimchi-premium',
+  'Kimpbotforme': 'kimchi-premium',
   'ai-hub': 'ai-hub',
 };
 

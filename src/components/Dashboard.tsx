@@ -120,15 +120,17 @@ export function Dashboard() {
 
   // --- 필터/정렬 ---
 
+  const effectiveCat = (s: ProjectSnapshot) => s.runtimeCategory ?? s.project.category;
+
   const filtered =
     filter === 'all'
       ? snapshots
-      : snapshots.filter((s) => s.project.category === filter);
+      : snapshots.filter((s) => effectiveCat(s) === filter);
 
   const sorted = [...filtered].sort((a, b) => {
-    const catOrder: Record<string, number> = { running: 0, dev: 1, tool: 2, legacy: 3 };
+    const catOrder: Record<string, number> = { running: 0, dev: 1, tool: 2, legacy: 3, stopped: 4 };
     const catDiff =
-      (catOrder[a.project.category] ?? 99) - (catOrder[b.project.category] ?? 99);
+      (catOrder[effectiveCat(a)] ?? 99) - (catOrder[effectiveCat(b)] ?? 99);
     if (catDiff !== 0) return catDiff;
     const aDays = a.git.daysSinceCommit ?? 999;
     const bDays = b.git.daysSinceCommit ?? 999;

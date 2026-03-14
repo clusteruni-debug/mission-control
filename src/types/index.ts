@@ -73,10 +73,12 @@ export interface ProjectSnapshot {
   git: GitHubRepoInfo;
   health: ProjectHealth;
   changelog: ChangelogEntry | null;
-  /** CHANGELOG에서 자동 추출한 현재 단계 (없으면 project.phase 폴백) */
+  /** CHANGELOG에서 자동 추출한 현재 단계 */
   livePhase: string | null;
-  /** CLAUDE.md에서 자동 추출한 다음 할 일 (없으면 project.nextTasks 폴백) */
+  /** CLAUDE.md에서 자동 추출한 다음 할 일 */
   liveNextTasks: string[] | null;
+  /** pm2/systemd 실시간 상태 기반 카테고리 (없으면 project.category 폴백) */
+  runtimeCategory?: ProjectConfig['category'];
 }
 
 export interface ProjectDetail extends ProjectSnapshot {
@@ -136,6 +138,16 @@ export type Pm2Status = 'online' | 'stopping' | 'stopped' | 'errored' | 'launchi
 export type ServiceRuntime = 'pm2' | 'wsl-systemd' | 'manual';
 
 export type ServiceCategory = 'always-on' | 'dev-server' | 'paper-trading' | 'wsl';
+
+export interface ServiceRegistryEntry {
+  name: string;
+  runtime: ServiceRuntime;
+  category: ServiceCategory;
+  projectFolder?: string;
+  port?: number;
+  autorestart: boolean;
+  protected: boolean;
+}
 
 export interface Pm2ServiceInfo {
   name: string;
