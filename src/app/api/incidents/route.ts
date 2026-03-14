@@ -56,6 +56,7 @@ export async function POST(request: NextRequest) {
         status: 'open',
         services_affected: services_affected || [],
         detected_at: new Date().toISOString(),
+        source: 'manual',
       })
       .select()
       .single();

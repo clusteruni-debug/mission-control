@@ -90,6 +90,22 @@ export const INCIDENT_STATUS_COLORS: Record<IncidentStatus, string> = {
   resolved: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300',
 };
 
+// ─── Incident Source ───
+
+import type { IncidentSource } from '@/types';
+
+export const INCIDENT_SOURCE_LABELS: Record<IncidentSource, string> = {
+  manual: '수동',
+  'auto-recovery': '자동 복구',
+  'health-check': '상태 체크',
+};
+
+export const INCIDENT_SOURCE_COLORS: Record<IncidentSource, string> = {
+  manual: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
+  'auto-recovery': 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900 dark:text-cyan-300',
+  'health-check': 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300',
+};
+
 // Make Money tuning date (for 3-period win rate comparison)
 export const MAKE_MONEY_TUNING_DATE = new Date('2026-03-01T00:00:00Z').getTime();
 

@@ -170,6 +170,7 @@ export type ServiceAction = 'start' | 'stop' | 'restart';
 
 export type IncidentSeverity = 'critical' | 'high' | 'medium' | 'low';
 export type IncidentStatus = 'open' | 'investigating' | 'resolved';
+export type IncidentSource = 'manual' | 'auto-recovery' | 'health-check';
 
 export interface Incident {
   id: number;
@@ -182,6 +183,10 @@ export interface Incident {
   resolved_at: string | null;
   created_at: string;
   updated_at: string;
+  source: IncidentSource;
+  action_taken: string | null;
+  recovery_duration_ms: number | null;
+  retry_count: number;
 }
 
 // --- Agent Queue ---

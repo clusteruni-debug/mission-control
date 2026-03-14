@@ -72,6 +72,7 @@ export async function POST(request: NextRequest) {
         status: 'open',
         services_affected: newErrored,
         detected_at: new Date().toISOString(),
+        source: 'health-check',
       })
       .select()
       .single();

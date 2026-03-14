@@ -6,16 +6,14 @@ import { ActivityFeed } from '../ActivityFeed';
 import { ProductivityStats } from '../ProductivityStats';
 import { ConnectionMap } from '../ConnectionMap';
 import { InfrastructureMap } from '../InfrastructureMap';
-import { TaskBoard } from '../TaskBoard';
 import { MakeMoneyWidget } from '../MakeMoneyWidget';
 import { EventWidget } from '../EventWidget';
 import { Overview } from '../Overview';
 import { DocHealth } from '../DocHealth';
 import { SessionDiary } from '../SessionDiary';
 import { ServiceControlPanel } from '../ServiceControlPanel';
-import { IncidentBoard } from '../IncidentBoard';
 import { DependencyImpact } from '../DependencyImpact';
-import { AgentQueuePanel } from '../AgentQueuePanel';
+import { OperationsPanel } from '../OperationsPanel';
 import type { ProjectSnapshot } from '@/types';
 import type { TabView } from './types';
 
@@ -65,11 +63,6 @@ export function TabContent({
 
       {activeTab === 'monitoring' && (
         <div className="space-y-4">
-          {/* Incident Board */}
-          <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
-            <IncidentBoard />
-          </div>
-
           {/* Dependency Impact (only renders when services are down) */}
           <DependencyImpact />
 
@@ -101,12 +94,12 @@ export function TabContent({
         </div>
       )}
 
-      {activeTab === 'agent-queue' && (
+      {activeTab === 'operations' && (
         <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
           <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
-            에이전트 큐
+            운영
           </h2>
-          <AgentQueuePanel />
+          <OperationsPanel />
         </div>
       )}
 
@@ -130,15 +123,6 @@ export function TabContent({
             </h2>
             <ActivityFeed />
           </div>
-        </div>
-      )}
-
-      {activeTab === 'board' && (
-        <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
-            작업 보드
-          </h2>
-          <TaskBoard />
         </div>
       )}
 
