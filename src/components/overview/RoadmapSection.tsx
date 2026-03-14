@@ -19,6 +19,11 @@ export function RoadmapSection({ snapshots }: RoadmapSectionProps) {
         </h3>
       </div>
       <div className="space-y-3">
+        {snapshots.every((s) => !s.project.priority) && (
+          <p className="py-4 text-center text-sm text-gray-400 dark:text-gray-500">
+            우선순위가 설정된 프로젝트가 없습니다
+          </p>
+        )}
         {(['high', 'medium', 'low', 'maintenance'] as ProjectPriority[]).map((priority) => {
           const items = snapshots.filter((s) => s.project.priority === priority);
           if (items.length === 0) return null;

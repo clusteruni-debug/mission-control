@@ -398,6 +398,24 @@ export const PROJECTS: ProjectConfig[] = [
     "priority": "medium"
   },
   {
+    "name": "Care Memory",
+    "folder": "care-memory",
+    "repo": "care-memory",
+    "description": "관계 돌봄 기록 앱 — 소중한 사람과의 연결 관리",
+    "techStack": [
+      "Next.js 16",
+      "TS",
+      "Tailwind v4"
+    ],
+    "category": "running",
+    "platform": "windows",
+    "runCmd": "npm run dev",
+    "port": 3050,
+    "phase": "MVP shell — localStorage, 한국어 UI",
+    "completionPct": 30,
+    "priority": "medium"
+  },
+  {
     "name": "WatchBot",
     "folder": "openclaw-bot",
     "repo": "openclaw-bot",
@@ -590,6 +608,15 @@ export const SERVICE_REGISTRY: ServiceRegistryEntry[] = [
     "category": "paper-trading",
     "projectFolder": "coin-test-project",
     "autorestart": true,
+    "protected": false
+  },
+  {
+    "name": "care-memory",
+    "runtime": "pm2",
+    "category": "dev-server",
+    "projectFolder": "care-memory",
+    "port": 3050,
+    "autorestart": false,
     "protected": false
   },
   {

@@ -97,7 +97,7 @@ export async function fetchTimelineItems(): Promise<TimelineItem[]> {
           type: 'trade',
           title: t.symbol || t.market || 'Trade',
           detail: `${t.side || ''} ${pnlStr}`.trim(),
-          timestamp: new Date(typeof ts === 'number' ? ts : ts).toISOString(),
+          timestamp: new Date(ts).toISOString(),
         });
       }
     }

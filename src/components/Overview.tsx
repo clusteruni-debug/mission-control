@@ -10,9 +10,6 @@ import {
 import { QuickLaunch } from './QuickLaunch';
 import { SummaryCards } from './overview/SummaryCards';
 import { TrendChartSection } from './overview/TrendChartSection';
-import { TimelineSection } from './overview/TimelineSection';
-import { RoadmapSection } from './overview/RoadmapSection';
-import { fetchTimelineItems } from './overview/timeline-utils';
 import {
   extractBalanceSeries,
   extractParticipationSeries,
@@ -22,7 +19,6 @@ import type {
   OverviewProps,
   MakeMoneyOverview,
   EventOverview,
-  TimelineItem,
   RangeKey,
   SnapshotRow,
   SummaryCardDef,
@@ -34,10 +30,6 @@ export function Overview({ snapshots, onNavigate }: OverviewProps) {
   const [events, setEvents] = useState<EventOverview | null>(null);
   const [mmStatus, setMmStatus] = useState<ServiceStatus>('unknown');
   const [eventStatus, setEventStatus] = useState<ServiceStatus>('unknown');
-
-  // 통합 타임라인
-  const [timeline, setTimeline] = useState<TimelineItem[]>([]);
-  const [timelineLoading, setTimelineLoading] = useState(true);
 
   // 추세 차트
   const [chartRange, setChartRange] = useState<RangeKey>('24h');
@@ -71,6 +63,8 @@ export function Overview({ snapshots, onNavigate }: OverviewProps) {
   // --- 데이터 로딩 ---
 
   useEffect(() => {
+    let cancelled = false;
+
     // Make Money
     Promise.all([
       fetch('/api/make-money?path=portfolio')
@@ -80,6 +74,7 @@ export function Overview({ snapshots, onNavigate }: OverviewProps) {
         .then((r) => r.json())
         .catch(() => null),
     ]).then(([pRes, hRes]) => {
+      if (cancelled) return;
       if (pRes?.status === 'online' && pRes.data) {
         setMakeMoney({
           balance: pRes.data.balance,
@@ -96,6 +91,7 @@ export function Overview({ snapshots, onNavigate }: OverviewProps) {
     fetch('/api/telegram-bot?path=stats')
       .then((r) => r.json())
       .then((res) => {
+        if (cancelled) return;
         if (res?.status === 'online' && res.data) {
           setEvents({
             deadlineSoon: res.data.deadlineSoon ?? 0,
@@ -107,15 +103,12 @@ export function Overview({ snapshots, onNavigate }: OverviewProps) {
           setEventStatus('offline');
         }
       })
-      .catch(() => setEventStatus('offline'));
-
-    // 통합 타임라인
-    fetchTimelineItems()
-      .then(setTimeline)
-      .finally(() => setTimelineLoading(false));
+      .catch(() => { if (!cancelled) setEventStatus('offline'); });
 
     // 스냅샷 (추세 차트)
     fetchSnapshots('24h');
+
+    return () => { cancelled = true; };
   }, [fetchSnapshots]);
 
   // --- 프로젝트 통계 ---
@@ -226,10 +219,6 @@ export function Overview({ snapshots, onNavigate }: OverviewProps) {
         onRangeChange={handleRangeChange}
         chartLoading={chartLoading}
       />
-
-      <TimelineSection timeline={timeline} loading={timelineLoading} />
-
-      <RoadmapSection snapshots={snapshots} />
     </div>
   );
 }

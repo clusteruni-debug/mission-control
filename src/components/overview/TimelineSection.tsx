@@ -1,16 +1,23 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { cn, formatRelativeDate } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
 import type { TimelineItem } from './types';
-import { TIMELINE_META } from './timeline-utils';
+import { TIMELINE_META, fetchTimelineItems } from './timeline-utils';
 
-interface TimelineSectionProps {
-  timeline: TimelineItem[];
-  loading: boolean;
-}
+export function TimelineSection() {
+  const [timeline, setTimeline] = useState<TimelineItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export function TimelineSection({ timeline, loading }: TimelineSectionProps) {
+  useEffect(() => {
+    let cancelled = false;
+    fetchTimelineItems()
+      .then((items) => { if (!cancelled) setTimeline(items); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, []);
+
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
       <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">

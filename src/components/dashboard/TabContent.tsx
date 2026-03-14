@@ -14,6 +14,8 @@ import { SessionDiary } from '../SessionDiary';
 import { ServiceControlPanel } from '../ServiceControlPanel';
 import { DependencyImpact } from '../DependencyImpact';
 import { OperationsPanel } from '../OperationsPanel';
+import { TimelineSection } from '../overview/TimelineSection';
+import { RoadmapSection } from '../overview/RoadmapSection';
 import type { ProjectSnapshot } from '@/types';
 import type { TabView } from './types';
 
@@ -51,13 +53,16 @@ export function TabContent({
       )}
 
       {activeTab === 'projects' && (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {sorted.map((snapshot) => (
-            <ProjectCard
-              key={snapshot.project.folder}
-              snapshot={snapshot}
-            />
-          ))}
+        <div className="space-y-6">
+          <RoadmapSection snapshots={snapshots} />
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {sorted.map((snapshot) => (
+              <ProjectCard
+                key={snapshot.project.folder}
+                snapshot={snapshot}
+              />
+            ))}
+          </div>
         </div>
       )}
 
@@ -111,6 +116,7 @@ export function TabContent({
             </h2>
             <ProductivityStats snapshots={snapshots} />
           </div>
+          <TimelineSection />
           <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
             <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
               세션 다이어리
