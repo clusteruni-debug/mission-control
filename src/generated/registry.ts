@@ -559,6 +559,30 @@ export const SERVICE_REGISTRY: ServiceRegistryEntry[] = [
     "protected": false
   },
   {
+    "name": "tradinglab-paper-day",
+    "runtime": "pm2",
+    "category": "paper-trading",
+    "projectFolder": "coin-test-project",
+    "autorestart": false,
+    "protected": false
+  },
+  {
+    "name": "tradinglab-paper-swing",
+    "runtime": "pm2",
+    "category": "paper-trading",
+    "projectFolder": "coin-test-project",
+    "autorestart": false,
+    "protected": false
+  },
+  {
+    "name": "tradinglab-dryrun",
+    "runtime": "pm2",
+    "category": "paper-trading",
+    "projectFolder": "coin-test-project",
+    "autorestart": false,
+    "protected": false
+  },
+  {
     "autorestart": false,
     "protected": false,
     "runtime": "pm2",
@@ -574,21 +598,5 @@ export const SERVICE_REGISTRY: ServiceRegistryEntry[] = [
     "category": "dev-server",
     "projectFolder": "telegram-event-bot",
     "port": 5002
-  },
-  {
-    "autorestart": false,
-    "protected": false,
-    "runtime": "pm2",
-    "name": "tradinglab-paper-day",
-    "category": "paper-trading",
-    "projectFolder": "coin-test-project"
-  },
-  {
-    "autorestart": false,
-    "protected": false,
-    "runtime": "pm2",
-    "name": "tradinglab-paper-scalp",
-    "category": "paper-trading",
-    "projectFolder": "coin-test-project"
   }
 ];

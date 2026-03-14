@@ -157,12 +157,13 @@
     "make-money": { "category": "always-on", "autorestart": true, "protected": true },
     "kimchi-bot": { "category": "always-on", "autorestart": true },
     "tradinglab": { "category": "always-on", "autorestart": true },
+    "tradinglab-paper-day": { "category": "paper-trading" },
+    "tradinglab-paper-swing": { "category": "paper-trading" },
+    "tradinglab-dryrun": { "category": "paper-trading" },
     "telegram-event-bot": { "category": "wsl", "autorestart": true }
   },
   "extraServices": [
     { "name": "telegram-bot", "runtime": "pm2", "category": "dev-server", "projectFolder": "telegram-event-bot" },
-    { "name": "telegram-web", "runtime": "pm2", "category": "dev-server", "projectFolder": "telegram-event-bot", "port": 5002 },
-    { "name": "tradinglab-paper-day", "runtime": "pm2", "category": "paper-trading", "projectFolder": "coin-test-project" },
-    { "name": "tradinglab-paper-scalp", "runtime": "pm2", "category": "paper-trading", "projectFolder": "coin-test-project" }
+    { "name": "telegram-web", "runtime": "pm2", "category": "dev-server", "projectFolder": "telegram-event-bot", "port": 5002 }
   ]
 }
