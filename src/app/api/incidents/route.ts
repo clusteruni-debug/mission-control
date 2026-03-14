@@ -87,15 +87,27 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'id required' }, { status: 400 });
     }
 
+    const supabase = getSupabaseAdmin();
+
     const payload: Record<string, unknown> = {
       ...updates,
       updated_at: new Date().toISOString(),
     };
     if (updates.status === 'resolved') {
-      payload.resolved_at = new Date().toISOString();
+      const now = new Date();
+      payload.resolved_at = now.toISOString();
+
+      // Compute recovery_duration_ms from detected_at
+      const { data: existing } = await supabase
+        .from('mc_incidents')
+        .select('detected_at')
+        .eq('id', id)
+        .maybeSingle();
+      if (existing?.detected_at) {
+        payload.recovery_duration_ms = now.getTime() - new Date(existing.detected_at).getTime();
+      }
     }
 
-    const supabase = getSupabaseAdmin();
     const { data, error } = await supabase
       .from('mc_incidents')
       .update(payload)

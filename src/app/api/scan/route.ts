@@ -66,12 +66,12 @@ export async function GET() {
     // Fire-and-forget recovery trigger (localhost only)
     if (!process.env.VERCEL && process.env.MC_CONTROL_SECRET) {
       const controller = new AbortController();
-      setTimeout(() => controller.abort(), 15000);
+      const timer = setTimeout(() => controller.abort(), 15000);
       fetch(`http://localhost:${process.env.PORT || 3000}/api/recovery`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${process.env.MC_CONTROL_SECRET}` },
         signal: controller.signal,
-      }).catch(() => {});
+      }).catch(() => {}).finally(() => clearTimeout(timer));
     }
 
     return response;

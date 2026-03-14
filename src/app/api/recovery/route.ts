@@ -13,6 +13,9 @@ export const dynamic = 'force-dynamic';
 // Track retry counts in memory (resets on server restart)
 const retryCounts: Record<string, number> = {};
 
+// In-memory lock to prevent concurrent recovery runs creating duplicate incidents
+let recoveryInProgress = false;
+
 // --- DB helper functions (best-effort, never block recovery) ---
 
 async function findOpenIncident(supabase: ReturnType<typeof getSupabaseAdmin>, serviceName: string) {
@@ -87,6 +90,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Recovery is localhost-only' }, { status: 400 });
   }
 
+  // Prevent concurrent recovery runs (race condition → duplicate incidents)
+  if (recoveryInProgress) {
+    return NextResponse.json({ skipped: true, reason: 'recovery already in progress' });
+  }
+  recoveryInProgress = true;
+
   let supabase: ReturnType<typeof getSupabaseAdmin> | null = null;
   try {
     supabase = getSupabaseAdmin();
@@ -96,7 +105,8 @@ export async function POST(request: NextRequest) {
 
   try {
     const { stdout } = await execAsync('pm2 jlist', { timeout: 10000 });
-    const processes: Array<{ name: string; pm2_env?: { status?: string } }> = JSON.parse(stdout);
+    const parsed: unknown = JSON.parse(stdout);
+    const processes: Array<{ name: string; pm2_env?: { status?: string } }> = Array.isArray(parsed) ? parsed : [];
 
     const actions: Array<{ service: string; action: string; result: string }> = [];
 
@@ -123,6 +133,16 @@ export async function POST(request: NextRequest) {
               // Stop incrementing past maxRetries+1
               retryCounts[retryKey] = rule.maxRetries + 1;
               actions.push({ service: rule.service, action: 'skip', result: `max retries (${rule.maxRetries}) exceeded` });
+
+              // Telegram alert (WSL services too)
+              if (process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_ALERT_CHAT_ID) {
+                const text = `[Auto-Recovery] ${rule.service} (WSL) recovery failed after ${rule.maxRetries} attempts. Manual intervention needed.`;
+                await fetch(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ chat_id: process.env.TELEGRAM_ALERT_CHAT_ID, text }),
+                }).catch(() => {});
+              }
 
               // Escalate incident in DB
               if (supabase) {
@@ -264,6 +284,8 @@ export async function POST(request: NextRequest) {
       { error: e instanceof Error ? e.message : 'unknown error' },
       { status: 500 }
     );
+  } finally {
+    recoveryInProgress = false;
   }
 }
 
